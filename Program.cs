@@ -15,6 +15,15 @@ class Website
 
 }
 
+class LGAEvent
+{
+    public string? Title {get; set;}
+    public string? Description { get; set; }
+    public int Id { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+}
+
 public class Scraper
 {
     public static async Task Scrape()
@@ -50,30 +59,19 @@ public class Scraper
     {
         Website website = new Website { UrlLink = "https://atparramatta.com/whats-on" };
 
-        var urlLink = new List<string>();
+        List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
-        urlLink = document.All
+        lgaEvents = document.All
             .Where(x =>
                 x.ClassName == "title" &&
                 x.TextContent != null && x.TagName == "H4")
             .Select(x => x.TextContent)
             .ToList();
 
-        if (urlLink.Count == 0)
-        {
-            Console.WriteLine("Nothin!");
-        } 
-        else 
-        {
-            foreach(var title in urlLink)
-            {
-                Console.WriteLine(title);
-            }
-        }
-        await ExportToJson(urlLink);
+        await ExportToJson(lgaEvents);
     }
 
-    public static async Task ExportToJson(List<string> results)
+    public static async Task ExportToJson(List<LGAEvent> results)
     {
         string filePath = "./LGAInfo.json";
 
