@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Text.Json;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
@@ -35,6 +36,7 @@ public class Scraper
             IHtmlDocument document = parser.ParseDocument(response);
 
             GetScrapeResults(document);
+            
         }
         catch(HttpRequestException e)
         {
@@ -44,7 +46,7 @@ public class Scraper
 
     }
 
-    public static void GetScrapeResults(IHtmlDocument document)
+    public static async Task GetScrapeResults(IHtmlDocument document)
     {
         Website website = new Website { UrlLink = "https://atparramatta.com/whats-on" };
 
@@ -57,12 +59,37 @@ public class Scraper
             .Select(x => x.TextContent)
             .ToList();
 
-        if (urlLink.Count == 0){
+        if (urlLink.Count == 0)
+        {
             Console.WriteLine("Nothin!");
-        } else {
-            foreach(var title in urlLink){
+        } 
+        else 
+        {
+            foreach(var title in urlLink)
+            {
                 Console.WriteLine(title);
             }
         }
+        Console.WriteLine($"Current directory is '{Environment.CurrentDirectory}'");
+
+        await ExportToJson();
+    }
+
+    public static async Task ExportToJson()
+    {
+        Website website = new Website();
+
+        string fileName = "EventInfo.json";
+        using FileStream createStream = File.Create(fileName);
+
+        var options = new JsonSerializerOptions { WriteIndented = true };
+
+        await JsonSerializer.SerializeAsync(createStream, options);
+        await createStream.DisposeAsync();
+
+
+        //string projectFolder = System.IO.Path.GetFullPath(@"..\..\");
+        //File.WriteAllText( @"webscrapertool\eventInfo.json", jsonFile);
+        //using (StreamWriter file = File.CreateText())
     }
 }
