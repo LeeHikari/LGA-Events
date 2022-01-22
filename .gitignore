@@ -1,0 +1,17 @@
+LGAInfo.json
+bin/Debug/net6.0/webscrapertool.dll
+bin/Debug/net6.0/webscrapertool.pdb
+bin/Debug/net6.0/ref/webscrapertool.dll
+obj/project.assets.json
+obj/project.nuget.cache
+obj/webscrapertool.csproj.nuget.dgspec.json
+obj/webscrapertool.csproj.nuget.g.props
+obj/Debug/net6.0/webscrapertool.assets.cache
+obj/Debug/net6.0/webscrapertool.csproj.AssemblyReference.cache
+obj/Debug/net6.0/webscrapertool.csproj.CoreCompileInputs.cache
+obj/Debug/net6.0/webscrapertool.csproj.FileListAbsolute.txt
+obj/Debug/net6.0/webscrapertool.dll
+obj/Debug/net6.0/webscrapertool.GeneratedMSBuildEditorConfig.editorconfig
+obj/Debug/net6.0/webscrapertool.genruntimeconfig.cache
+obj/Debug/net6.0/webscrapertool.pdb
+obj/Debug/net6.0/ref/webscrapertool.dll
