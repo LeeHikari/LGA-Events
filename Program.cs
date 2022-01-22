@@ -76,12 +76,10 @@ public class Scraper
     public static async Task ExportToJson(List<string> results)
     {
         string filePath = "./LGAInfo.json";
+
         var options = new JsonSerializerOptions{WriteIndented = true};
         var serialized = JsonSerializer.Serialize(results, options);
-        if(!File.Exists(filePath))
-        {
-            File.Create(filePath);
-        }
+
         using(StreamWriter sw = new StreamWriter(filePath))
         {
             await sw.WriteAsync(serialized);
