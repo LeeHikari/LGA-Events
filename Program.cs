@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using System.IO;
 
 Scraper.Scrape().Wait();
 
@@ -12,7 +13,6 @@ class Website
     public string? UrlLink { get; set; }
     private string? ImageUrl { get; set; }
 
-    //public string[] ImageQueryTerms { get; } = { "image-block" };
 }
 
 public class Scraper
@@ -70,26 +70,21 @@ public class Scraper
                 Console.WriteLine(title);
             }
         }
-        Console.WriteLine($"Current directory is '{Environment.CurrentDirectory}'");
-
-        await ExportToJson();
+        await ExportToJson(urlLink);
     }
 
-    public static async Task ExportToJson()
+    public static async Task ExportToJson(List<string> results)
     {
-        Website website = new Website();
-
-        string fileName = "EventInfo.json";
-        using FileStream createStream = File.Create(fileName);
-
-        var options = new JsonSerializerOptions { WriteIndented = true };
-
-        await JsonSerializer.SerializeAsync(createStream, options);
-        await createStream.DisposeAsync();
-
-
-        //string projectFolder = System.IO.Path.GetFullPath(@"..\..\");
-        //File.WriteAllText( @"webscrapertool\eventInfo.json", jsonFile);
-        //using (StreamWriter file = File.CreateText())
+        string filePath = "./LGAInfo.json";
+        var options = new JsonSerializerOptions{WriteIndented = true};
+        var serialized = JsonSerializer.Serialize(results, options);
+        if(!File.Exists(filePath))
+        {
+            File.Create(filePath);
+        }
+        using(StreamWriter sw = new StreamWriter(filePath))
+        {
+            await sw.WriteAsync(serialized);
+        }
     }
 }
