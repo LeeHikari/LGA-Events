@@ -15,7 +15,7 @@ class Website
 
 }
 
-class LGAEvent
+public class LGAEvent
 {
     public string? Title {get; set;}
     public string? Description { get; set; }
@@ -61,12 +61,20 @@ public class Scraper
 
         List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
-        lgaEvents = document.All
-            .Where(x =>
-                x.ClassName == "title" &&
-                x.TextContent != null && x.TagName == "H4")
-            .Select(x => x.TextContent)
-            .ToList();
+        // lgaEvents = document.All
+        //     .Where(x =>
+        //         x.ClassName == "title" &&
+        //         x.TextContent != null && x.TagName == "H4")
+        //     .Select(x => x.TextContent)
+        //     .ToList();
+
+        lgaEvents= document.All
+                .Where(x =>
+                    x.ClassName == "title" &&
+                    x.TextContent != null && x.TagName == "H4")
+                .Select(x=> new LGAEvent{Title = x.TextContent})
+                .ToList();
+
 
         await ExportToJson(lgaEvents);
     }
