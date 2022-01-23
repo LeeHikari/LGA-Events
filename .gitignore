@@ -15,3 +15,10 @@ obj/Debug/net6.0/webscrapertool.GeneratedMSBuildEditorConfig.editorconfig
 obj/Debug/net6.0/webscrapertool.genruntimeconfig.cache
 obj/Debug/net6.0/webscrapertool.pdb
 obj/Debug/net6.0/ref/webscrapertool.dll
+EventInfo.json
+bin/Debug/net6.0/webscrapertool.dll
+bin/Debug/net6.0/webscrapertool.pdb
+bin/Debug/net6.0/ref/webscrapertool.dll
+obj/Debug/net6.0/webscrapertool.dll
+obj/Debug/net6.0/webscrapertool.pdb
+obj/Debug/net6.0/ref/webscrapertool.dll
