@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
@@ -19,13 +19,14 @@ public class LGAEvent
 {
     public string? Title {get; set;}
     public string? Description { get; set; }
-    public int Id { get; set; }
+    public string? Id { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 }
 
 public class Scraper
 {
+
     public static async Task Scrape()
     {
         try
@@ -44,7 +45,7 @@ public class Scraper
             HtmlParser parser = new HtmlParser();
             IHtmlDocument document = parser.ParseDocument(response);
 
-            GetScrapeResults(document);
+            await GetScrapeResults(document);
             
         }
         catch(HttpRequestException e)
@@ -55,26 +56,48 @@ public class Scraper
 
     }
 
+    /// <summary>
+        /// Elements are found and selected from the Parramatta website before being sent off
+        /// to the ExportToJson method
+    /// </summary>
+
     public static async Task GetScrapeResults(IHtmlDocument document)
     {
-        Website website = new Website { UrlLink = "https://atparramatta.com/whats-on" };
-
         List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
-        // lgaEvents = document.All
-        //     .Where(x =>
-        //         x.ClassName == "title" &&
-        //         x.TextContent != null && x.TagName == "H4")
-        //     .Select(x => x.TextContent)
-        //     .ToList();
+        lgaEvents = document.All
+            .Where(e =>
+                e.ClassName == "content-block" &&
+                e.TextContent != null && e.TagName == "DIV")
 
-        lgaEvents= document.All
-                .Where(x =>
-                    x.ClassName == "title" &&
-                    x.TextContent != null && x.TagName == "H4")
-                .Select(x=> new LGAEvent{Title = x.TextContent})
-                .ToList();
+            .Select(content => { 
+                var titleElement = content.Children.SingleOrDefault(childContent =>
+                childContent.ClassList.Contains("title") && 
+                childContent.TextContent != null && 
+                childContent.TagName == "H4");
 
+                var contentDetailsElement = content.Children.SingleOrDefault(childContent =>
+                    childContent.ClassList.Contains("content-details") &&
+                    childContent.TextContent != null &&
+                    childContent.TagName == "DIV");
+
+                var description = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                    childContent.ClassList.Contains("description") &&
+                    childContent.TextContent != null &&
+                    childContent.TagName == "DIV");
+
+                var eventDate = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                    childContent.ClassList.Contains("event-date") &&
+                    childContent.TextContent != null &&
+                    childContent.TagName == "DIV");    
+                 
+                return new LGAEvent
+                {
+                    Title = titleElement?.TextContent,
+                    Description = description?.TextContent,
+                    // StartDate = eventDate?.TextContent;
+                };
+            }).ToList();
 
         await ExportToJson(lgaEvents);
     }
