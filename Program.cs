@@ -27,6 +27,10 @@ public class LGAEvent
 public class Scraper
 {
 
+/// <summary>
+///     Uses a Anglesharp in order to create a connection to a website we wish to webscrape
+/// </summary>
+/// <returns>Returns the website inside of a IHtmlDocument variable to GetScrapeResults</returns>
     public static async Task Scrape()
     {
         try
@@ -56,50 +60,77 @@ public class Scraper
 
     }
 
-    /// <summary>
-        /// Elements are found and selected from the Parramatta website before being sent off
-        /// to the ExportToJson method
-    /// </summary>
+/// <summary>
+/// Elements are found and selected from the Parramatta website before being sent off
+/// to the ExportToJson method.
+/// </summary>
+/// <param name="document">Uses the variable which stores the website, allowing us to use it in the LINQ query</param>
+/// <returns>Returns the variable storing lgaEvents</returns>
 
     public static async Task GetScrapeResults(IHtmlDocument document)
     {
-        List<LGAEvent> lgaEvents = new List<LGAEvent>();
+        try
+        {
+            //Instantiates a generic list of type LGAEvents, which uses the properties declared
+            //in it's class above.
 
-        lgaEvents = document.All
-            .Where(e =>
-                e.ClassName == "content-block" &&
-                e.TextContent != null && e.TagName == "DIV")
+           List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
-            .Select(content => { 
-                var titleElement = content.Children.SingleOrDefault(childContent =>
-                childContent.ClassList.Contains("title") && 
-                childContent.TextContent != null && 
-                childContent.TagName == "H4");
+            //Creates a variable which stores a list of elements from a website where the class
+            //name equals "content-block and the tagName is a DIV.
 
-                var contentDetailsElement = content.Children.SingleOrDefault(childContent =>
-                    childContent.ClassList.Contains("content-details") &&
-                    childContent.TextContent != null &&
-                    childContent.TagName == "DIV");
+            lgaEvents = document.All
+                .Where(e =>
+                    e.ClassName == "content-block" &&
+                    e.TextContent != null && e.TagName == "DIV")
 
-                var description = contentDetailsElement?.Children.SingleOrDefault(childContent =>
-                    childContent.ClassList.Contains("description") &&
-                    childContent.TextContent != null &&
-                    childContent.TagName == "DIV");
+                //Begins the select query by selecting the a list of class names which contain
+                //title and the tagName is equals a H4 element.
 
-                var eventDate = contentDetailsElement?.Children.SingleOrDefault(childContent =>
-                    childContent.ClassList.Contains("event-date") &&
-                    childContent.TextContent != null &&
-                    childContent.TagName == "DIV");    
-                 
-                return new LGAEvent
-                {
-                    Title = titleElement?.TextContent,
-                    Description = description?.TextContent,
-                    // StartDate = eventDate?.TextContent;
-                };
-            }).ToList();
+                .Select(content => { 
+                    var titleElement = content.Children.SingleOrDefault(childContent =>
+                    childContent.ClassList.Contains("title") && 
+                    childContent.TextContent != null && 
+                    childContent.TagName == "H4");
 
-        await ExportToJson(lgaEvents);
+                    //Creates contentDetailsElement which is the child of the previous select statement
+                    //which is a class that contains "content-details" and is a DIV.
+
+                    var contentDetailsElement = content.Children.SingleOrDefault(childContent =>
+                        childContent.ClassList.Contains("content-details") &&
+                        childContent.TextContent != null &&
+                        childContent.TagName == "DIV");
+
+                    //contentDetailsElement selects its children which contain both "description"
+                    //and "event-date" class names.
+
+                    var description = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                        childContent.ClassList.Contains("description") &&
+                        childContent.TextContent != null &&
+                        childContent.TagName == "DIV");
+
+                    var eventDate = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                        childContent.ClassList.Contains("event-date") &&
+                        childContent.TextContent != null &&
+                        childContent.TagName == "DIV");    
+                    
+                    //The LGAEvent object links up with all previous variables here
+
+                    return new LGAEvent
+                    {
+                        Title = titleElement?.TextContent,
+                        Description = description?.TextContent,
+                        // StartDate = eventDate?.TextContent;
+                    };
+                }).ToList();
+
+            await ExportToJson(lgaEvents);
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine("\nException Caught!");	
+            Console.WriteLine("Message :{0} ",e.Message);
+        }
     }
 
     public static async Task ExportToJson(List<LGAEvent> results)
