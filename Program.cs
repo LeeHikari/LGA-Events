@@ -113,6 +113,17 @@ public class Scraper
                         childContent.ClassList.Contains("event-date") &&
                         childContent.TextContent != null &&
                         childContent.TagName == "DIV");    
+
+                    DateTime startDate = new DateTime(1/1/2000);
+                    DateTime? endDate = null;
+                    int hyphenString = eventDate.TextContent.IndexOf('-');
+                    if(hyphenString == -1){
+                        startDate = DateTime.Parse(eventDate.TextContent);
+                    }
+                    else{
+                        startDate = DateTime.Parse(eventDate.TextContent.Substring(0, hyphenString-1));
+                        endDate = DateTime.Parse(eventDate.TextContent.Substring(hyphenString+1));
+                    }
                     
                     //The LGAEvent object links up with all previous variables here
 
@@ -120,7 +131,9 @@ public class Scraper
                     {
                         Title = titleElement?.TextContent,
                         Description = description?.TextContent,
-                        // StartDate = eventDate?.TextContent;
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        Id = startDate.ToString("yyyy/MM/dd")+'-'+titleElement.TextContent.Replace(' ', '-')
                     };
                 }).ToList();
 
