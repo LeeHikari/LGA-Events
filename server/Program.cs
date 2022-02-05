@@ -74,12 +74,10 @@ public class Scraper
         {
             //Instantiates a generic list of type LGAEvents, which uses the properties declared
             //in it's class above.
-
            List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
             //Creates a variable which stores a list of elements from a website where the class
             //name equals "content-block and the tagName is a DIV.
-
             lgaEvents = document.All
                 .Where(e =>
                     e.ClassName == "content-block" &&
@@ -87,7 +85,6 @@ public class Scraper
 
                 //Begins the select query by selecting the a list of class names which contain
                 //title and the tagName is equals a H4 element.
-
                 .Select(content => { 
                     var titleElement = content.Children.SingleOrDefault(childContent =>
                     childContent.ClassList.Contains("title") && 
@@ -96,7 +93,6 @@ public class Scraper
 
                     //Creates contentDetailsElement which is the child of the previous select statement
                     //which is a class that contains "content-details" and is a DIV.
-
                     var contentDetailsElement = content.Children.SingleOrDefault(childContent =>
                         childContent.ClassList.Contains("content-details") &&
                         childContent.TextContent != null &&
@@ -104,38 +100,41 @@ public class Scraper
 
                     //contentDetailsElement selects its children which contain both "description"
                     //and "event-date" class names.
-
                     var description = contentDetailsElement?.Children.SingleOrDefault(childContent =>
                         childContent.ClassList.Contains("description") &&
                         childContent.TextContent != null &&
                         childContent.TagName == "DIV");
 
+                    //Collects the start and end dates for the LGA event
                     var eventDate = contentDetailsElement?.Children.SingleOrDefault(childContent =>
                         childContent.ClassList.Contains("event-date") &&
                         childContent.TextContent != null &&
                         childContent.TagName == "DIV");    
 
+                    //Splits the Start and End dates into 2 substrings
+                    //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
                     DateTime startDate = new DateTime(1/1/2000);
                     DateTime? endDate = null;
-                    int hyphenString = eventDate.TextContent.IndexOf('-');
-                    if(hyphenString == -1){
+                    int hyphenIndex = eventDate.TextContent.IndexOf('-');
+                    if(hyphenIndex == -1){
                         startDate = DateTime.Parse(eventDate.TextContent);
                     }
                     else{
-                        startDate = DateTime.Parse(eventDate.TextContent.Substring(0, hyphenString-1));
-                        endDate = DateTime.Parse(eventDate.TextContent.Substring(hyphenString+1));
+                        startDate = DateTime.Parse(eventDate.TextContent.Substring(0, hyphenIndex-1));
+                        endDate = DateTime.Parse(eventDate.TextContent.Substring(hyphenIndex+1));
                     }
 
-                    string modifiedTitle = titleElement.TextContent.Replace(' ', '-').Replace('/', '-');
+                    //Preparing the title for being inserted into the ID by replacing all spaces with hyphens
+                    string modifiedTitle = titleElement.TextContent.Replace(' ', '-');
                     
                     //The LGAEvent object links up with all previous variables here
-
                     return new LGAEvent
                     {
                         Title = titleElement?.TextContent,
                         Description = description?.TextContent,
                         StartDate = startDate,
                         EndDate = endDate,
+                        //Creates the ID by combining the start date and title and then encodes it into a HTML friendly string
                         Id = WebUtility.HtmlEncode(startDate.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
                     };
                 }).ToList();
