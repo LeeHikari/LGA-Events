@@ -2,3 +2,4 @@ LGAInfo.json
 bin/
 obj/
 .vscode/
+global.json
