@@ -1,0 +1,85 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.1",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@types/styled-components": "^5.1.18",
+    "axios": "^0.24.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "5.0.0",
+    "styled-components": "^5.3.3",
+    "typescript": "^4.5.4",
+    "web-vitals": "^2.1.2"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "react-app"
+    ],
+    "rules": {
+      "no-shadow": "warn",
+      "no-bitwise": "warn",
+      "no-else-return": "warn",
+      "no-lonely-if": "warn",
+      "prefer-arrow-callback": "warn",
+      "prefer-const": "warn",
+      "prefer-template": "warn",
+      "no-console": "warn",
+      "no-alert": "warn",
+      "jsx-a11y/no-onchange": "off",
+      "jsx-a11y/label-has-for": [
+        "warn",
+        {
+          "required": {
+            "every": [
+              "id"
+            ]
+          }
+        }
+      ],
+      "react/no-unused-state": "warn",
+      "no-const-assign": "warn",
+      "react/no-unescaped-entities": "off",
+      "no-unexpected-multiline": "error",
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/explicit-function-return-type": [
+        "error",
+        {
+          "allowExpressions": true
+        }
+      ],
+      "@typescript-eslint/ban-ts-ignore": "off"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
