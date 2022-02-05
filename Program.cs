@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using System.IO;
+using System.Net;
 
 Scraper.Scrape().Wait();
 
@@ -124,6 +125,8 @@ public class Scraper
                         startDate = DateTime.Parse(eventDate.TextContent.Substring(0, hyphenString-1));
                         endDate = DateTime.Parse(eventDate.TextContent.Substring(hyphenString+1));
                     }
+
+                    string modifiedTitle = titleElement.TextContent.Replace(' ', '-').Replace('/', '-');
                     
                     //The LGAEvent object links up with all previous variables here
 
@@ -133,7 +136,7 @@ public class Scraper
                         Description = description?.TextContent,
                         StartDate = startDate,
                         EndDate = endDate,
-                        Id = startDate.ToString("yyyy/MM/dd")+'-'+titleElement.TextContent.Replace(' ', '-')
+                        Id = WebUtility.HtmlEncode(startDate.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
                     };
                 }).ToList();
 
