@@ -7,44 +7,49 @@ using System.Net;
 
 namespace services
 {
-public class Scraper
-{
+    public class Scraper
+    {
+        static string baseUrl = "https://atparramatta.com";
 
-    /// <summary>
-    ///     Uses a Anglesharp in order to create a connection to a website we wish to webscrape
-    /// </summary>
-    /// <returns>Returns the website inside of a IHtmlDocument variable to GetScrapeResults</returns>
+        /// <summary>
+        ///     Uses a Anglesharp in order to create a connection to a website we wish to webscrape
+        /// </summary>
+        /// <returns>Returns the website inside of a IHtmlDocument variable to GetScrapeResults</returns>
         public async Task Scrape()
         {
             try
             {
-                Website website = new Website { UrlLink = "https://atparramatta.com/whats-on" };
+                Website website = new Website { UrlLink = baseUrl + "/whats-on" };
                 CancellationTokenSource cancellationToken = new CancellationTokenSource();
+
                 HttpClient httpClient = new HttpClient();
                 HttpResponseMessage request = await httpClient.GetAsync(website.UrlLink);
+
                 cancellationToken.Token.ThrowIfCancellationRequested();
                 Stream response = await request.Content.ReadAsStreamAsync();
+
                 cancellationToken.Token.ThrowIfCancellationRequested();
                 HtmlParser parser = new HtmlParser();
+                
                 IHtmlDocument document = parser.ParseDocument(response);
 
                 await GetScrapeResults(document);
-                
+
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
             {
-                Console.WriteLine("\nException Caught!");	
-                Console.WriteLine("Message :{0} ",e.Message);
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
             }
 
         }
 
-    /// <summary>
-    /// Elements are found and selected from the Parramatta website before being sent off
-    /// to the ExportToJson method.
-    /// </summary>
-    /// <param name="document">Uses the variable which stores the website, allowing us to use it in the LINQ query</param>
-    /// <returns>Returns the variable storing lgaEvents</returns>
+        /// <summary>
+        /// Elements are found and selected from the Parramatta website before being sent off
+        /// to the ExportToJson method.
+        /// </summary>
+        /// <param name="document">Uses the variable which stores the website, allowing us to use it in the LINQ query</param>
+        /// <returns>Returns the variable storing lgaEvents</returns>
 
         public static async Task GetScrapeResults(IHtmlDocument document)
         {
@@ -52,24 +57,52 @@ public class Scraper
             {
                 //Instantiates a generic list of type LGAEvents, which uses the properties declared
                 //in it's class above.
-            List<LGA_Event> lgaEvents = new List<LGA_Event>();
+                List<LGA_Event> lgaEvents = new List<LGA_Event>();
 
                 //Creates a variable which stores a list of elements from a website where the class
                 //name equals "content-block and the tagName is a DIV.
                 lgaEvents = document.All
-                    .Where(e =>
-                        e.ClassName == "content-block" &&
-                        e.TextContent != null && e.TagName == "DIV")
+                .Where(e =>
+                    e.TagName == "DIV" &&
+                    e.ClassList.Contains("col") &&
+                    e.TextContent != null)
 
                     //Begins the select query by selecting the a list of class names which contain
                     //title and the tagName is equals a H4 element.
-                    .Select(content => { 
+                    .Select(content =>
+                    {
+                        //Collects event URL
+                        IElement? anchorElement = content.Children.SingleOrDefault(childContent =>
+                            childContent.TagName == "A" &&
+                            childContent.TextContent != null &&
+                            childContent.ClassList.Contains("col-wrap"));
+
+                        string? eventUrl = null;
+
+                        if (anchorElement != null)
+                        {
+                            eventUrl = baseUrl + anchorElement.Attributes.GetNamedItem("href")?.Value;
+                        }
+
+                        //Collects image URL
+                        IElement? imageElement = content.Children.SingleOrDefault(childContent =>
+                            childContent.TagName == "DIV" &&
+                            childContent.TextContent != null &&
+                            childContent.ClassList.Contains("image-block"));
+
+                        string? imageUrl = null;
+
+                        if (imageElement != null)
+                        {
+                            imageUrl = baseUrl + imageElement.Attributes.GetNamedItem("style")?.Value;
+                        }
+                        
 
                         //Collects the title of the LGA event
                         IElement? titleElement = content.Children.SingleOrDefault(childContent =>
-                        childContent.ClassList.Contains("title") && 
-                        childContent.TextContent != null && 
-                        childContent.TagName == "H4");
+                            childContent.ClassList.Contains("title") &&
+                            childContent.TextContent != null &&
+                            childContent.TagName == "H4");
 
                         //Creates contentDetailsElement which is the child of the previous select statement
                         //which is a class that contains "content-details" and is a DIV.
@@ -89,24 +122,26 @@ public class Scraper
                         IElement? eventDateElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
                             childContent.ClassList.Contains("event-date") &&
                             childContent.TextContent != null &&
-                            childContent.TagName == "DIV");    
+                            childContent.TagName == "DIV");
 
                         //Splits the Start and End dates into 2 substrings
                         //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
                         DateTime startDate = new DateTime(2000, 1, 1);
                         DateTime? endDate = null;
                         int hyphenIndex = eventDateElement.TextContent.IndexOf('-');
-                        if(hyphenIndex == -1){
+                        if (hyphenIndex == -1)
+                        {
                             startDate = DateTime.Parse(eventDateElement.TextContent);
                         }
-                        else{
-                            startDate = DateTime.Parse(eventDateElement.TextContent.Substring(0, hyphenIndex-1));
-                            endDate = DateTime.Parse(eventDateElement.TextContent.Substring(hyphenIndex+1));
+                        else
+                        {
+                            startDate = DateTime.Parse(eventDateElement.TextContent.Substring(0, hyphenIndex - 1));
+                            endDate = DateTime.Parse(eventDateElement.TextContent.Substring(hyphenIndex + 1));
                         }
 
                         //Preparing the title for being inserted into the ID by replacing all spaces with hyphens
                         string modifiedTitle = titleElement.TextContent.Replace(' ', '-');
-                        
+
                         //The LGAEvent object links up with all previous variables here
                         return new LGA_Event
                         {
@@ -114,8 +149,10 @@ public class Scraper
                             Description = descriptionElement?.TextContent,
                             StartDate = startDate,
                             EndDate = endDate,
+                            EventUrl = anchorElement?.TextContent,
+                            EventImageUrl = imageElement?.TextContent,
                             //Creates the ID by combining the start date and title and then encodes it into a HTML friendly string
-                            Id = WebUtility.HtmlEncode(startDate.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
+                            Id = WebUtility.HtmlEncode(startDate.ToString("yyyy-MM-dd") + '-' + modifiedTitle.ToLower())
                         };
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
@@ -123,8 +160,8 @@ public class Scraper
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("\nException Caught!");	
-                Console.WriteLine("Message :{0} ",e.Message);
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
             }
         }
     }
