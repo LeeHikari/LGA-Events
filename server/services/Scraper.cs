@@ -93,16 +93,17 @@ public class Scraper
 
                         //Splits the Start and End dates into 2 substrings
                         //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
-                        DateTime startDate = new DateTime(2000, 1, 1);
-                        DateTime? endDate = null;
-                        int hyphenIndex = eventDateElement.TextContent.IndexOf('-');
+                        ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
+                        (DateTime Start, DateTime? End) dates = parramattaWebsiteScraper.SplitDatesIntoSubStrings(eventDateElement.TextContent);
+
+                        /*int hyphenIndex = eventDateElement.TextContent.IndexOf('-');
                         if(hyphenIndex == -1){
                             startDate = DateTime.Parse(eventDateElement.TextContent);
                         }
                         else{
                             startDate = DateTime.Parse(eventDateElement.TextContent.Substring(0, hyphenIndex-1));
                             endDate = DateTime.Parse(eventDateElement.TextContent.Substring(hyphenIndex+1));
-                        }
+                        }*/
 
                         //Preparing the title for being inserted into the ID by replacing all spaces with hyphens
                         string modifiedTitle = titleElement.TextContent.Replace(' ', '-');
@@ -112,10 +113,10 @@ public class Scraper
                         {
                             Title = titleElement?.TextContent,
                             Description = descriptionElement?.TextContent,
-                            StartDate = startDate,
-                            EndDate = endDate,
+                            StartDate = dates.Start,
+                            EndDate = dates.End,
                             //Creates the ID by combining the start date and title and then encodes it into a HTML friendly string
-                            Id = WebUtility.HtmlEncode(startDate.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
+                            Id = WebUtility.HtmlEncode(dates.Start.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
                         };
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
