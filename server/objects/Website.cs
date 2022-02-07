@@ -1,4 +1,4 @@
-namespace objects{
+namespace Objects{
     public class Website{
         private string? Title { get; set; }
         private string? Url { get; set; }

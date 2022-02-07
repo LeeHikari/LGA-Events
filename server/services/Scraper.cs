@@ -1,5 +1,5 @@
 using services;
-using objects;
+using Objects;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
@@ -129,18 +129,13 @@ namespace services
                         ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
                         (DateTime Start, DateTime? End) dates = parramattaWebsiteScraper.SplitDatesIntoSubStrings(eventDateElement.TextContent);
 
-                        //Preparing the title for being inserted into the ID by replacing all spaces with hyphens
-                        string modifiedTitle = titleElement.TextContent.Replace(' ', '-');
-
                         //The LGAEvent object links up with all previous variables here
                         return new LGA_Event
                         {
                             Title = titleElement?.TextContent,
                             Description = descriptionElement?.TextContent,
                             StartDate = dates.Start,
-                            EndDate = dates.End,
-                            //Creates the ID by combining the start date and title and then encodes it into a HTML friendly string
-                            Id = WebUtility.HtmlEncode(dates.Start.ToString("yyyy-MM-dd")+'-'+modifiedTitle.ToLower())
+                            EndDate = dates.End
                         };
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
