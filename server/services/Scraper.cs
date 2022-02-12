@@ -19,7 +19,7 @@ namespace services
         {
             try
             {
-                Website website = new Website { UrlLink = baseUrl + "/whats-on" };
+                Website website = new Website { UrlLink = baseUrl+"/whats-on" };
                 CancellationTokenSource cancellationToken = new CancellationTokenSource();
 
                 HttpClient httpClient = new HttpClient();
@@ -76,6 +76,10 @@ namespace services
                             childContent.TagName == "A" &&
                             childContent.TextContent != null &&
                             childContent.ClassList.Contains("col-wrap"));
+                        
+                        if(anchorElement == null){
+                            return null;
+                        }
 
                         string? eventUrl = null;
 
@@ -99,17 +103,27 @@ namespace services
                         
 
                         //Collects the title of the LGA event
-                        IElement? titleElement = content.Children.SingleOrDefault(childContent =>
-                            childContent.ClassList.Contains("title") &&
-                            childContent.TextContent != null &&
-                            childContent.TagName == "H4");
+                        IElement? titleElement = anchorElement.Children.FirstOrDefault(childContent =>
+                                childContent.TagName == "DIV" &&
+                                childContent.ClassList.Contains("content-block"))
+                            .Children.SingleOrDefault(childContent => 
+                                childContent.TagName == "H4" &&
+                                childContent.TextContent != null &&
+                                childContent.ClassList.Contains("title"));
 
                         //Creates contentDetailsElement which is the child of the previous select statement
                         //which is a class that contains "content-details" and is a DIV.
-                        IElement? contentDetailsElement = content.Children.SingleOrDefault(childContent =>
+                        /*IElement? contentDetailsElement = content.Children.SingleOrDefault(childContent =>
                             childContent.ClassList.Contains("content-details") &&
                             childContent.TextContent != null &&
-                            childContent.TagName == "DIV");
+                            childContent.TagName == "DIV");*/
+
+                        IElement? contentDetailsElement = anchorElement.Children.FirstOrDefault(childContent =>
+                            childContent.TagName == "DIV" &&
+                            childContent.ClassList.Contains("content-block"))
+                            .Children.SingleOrDefault(childContent =>
+                            childContent.TagName == "DIV" &&
+                            childContent.ClassList.Contains("content-details"));
 
                         //contentDetailsElement selects its children which contain both "description"
                         //and "event-date" class names.
@@ -127,15 +141,15 @@ namespace services
                         //Splits the Start and End dates into 2 substrings
                         //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
                         ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
-                        (DateTime Start, DateTime? End) dates = parramattaWebsiteScraper.SplitDatesIntoSubStrings(eventDateElement.TextContent);
+                        (DateTime? Start, DateTime? End)? dates = parramattaWebsiteScraper.ParseDateString(eventDateElement.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
                         return new LGA_Event
                         {
                             Title = titleElement?.TextContent,
                             Description = descriptionElement?.TextContent,
-                            StartDate = dates.Start,
-                            EndDate = dates.End
+                            StartDate = (DateTime)dates.Value.Start,
+                            EndDate = dates.Value.End
                         };
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
