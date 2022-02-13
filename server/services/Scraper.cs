@@ -57,7 +57,7 @@ namespace services
             {
                 //Instantiates a generic list of type LGAEvents, which uses the properties declared
                 //in it's class above.
-                List<LGA_Event?> lgaEvents = new List<LGA_Event?>();
+                List<LGA_Event> lgaEvents = new List<LGA_Event>();
 
                 //Creates a variable which stores a list of elements from a website where the class
                 //name equals "content-block and the tagName is a DIV.
@@ -65,7 +65,8 @@ namespace services
                 .Where(e =>
                     e.TagName == "DIV" &&
                     e.ClassList.Contains("col") &&
-                    e.TextContent != null)
+                    e.TextContent != null &&
+                    e.Children.FirstOrDefault()!.TagName !="NAV")
 
                     //Begins the select query by selecting the a list of class names which contain
                     //title and the tagName is equals a H4 element.
@@ -76,10 +77,6 @@ namespace services
                             childContent.TagName == "A" &&
                             childContent.TextContent != null &&
                             childContent.ClassList.Contains("col-wrap"));
-                        
-                        if(anchorElement == null){
-                            return null;
-                        }
 
                         string? eventUrl = null;
 
@@ -113,11 +110,6 @@ namespace services
 
                         //Creates contentDetailsElement which is the child of the previous select statement
                         //which is a class that contains "content-details" and is a DIV.
-                        /*IElement? contentDetailsElement = content.Children.SingleOrDefault(childContent =>
-                            childContent.ClassList.Contains("content-details") &&
-                            childContent.TextContent != null &&
-                            childContent.TagName == "DIV");*/
-
                         IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
                             childContent.ClassList.Contains("content-block"))!
@@ -144,13 +136,7 @@ namespace services
                         (DateTime? Start, DateTime? End)? dates = parramattaWebsiteScraper.ParseDateString(eventDateElement!.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
-                        return new LGA_Event
-                        {
-                            Title = titleElement?.TextContent,
-                            Description = descriptionElement?.TextContent,
-                            StartDate = (DateTime)dates?.Start!,
-                            EndDate = dates?.End
-                        };
+                        return new LGA_Event(titleElement?.TextContent, descriptionElement?.TextContent, (DateTime)dates?.Start!, dates?.End, imageUrl, eventUrl);
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
                 await json.ExportToJson(lgaEvents);
