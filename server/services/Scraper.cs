@@ -57,7 +57,7 @@ namespace services
             {
                 //Instantiates a generic list of type LGAEvents, which uses the properties declared
                 //in it's class above.
-                List<LGA_Event> lgaEvents = new List<LGA_Event>();
+                List<LGA_Event?> lgaEvents = new List<LGA_Event?>();
 
                 //Creates a variable which stores a list of elements from a website where the class
                 //name equals "content-block and the tagName is a DIV.
@@ -103,9 +103,9 @@ namespace services
                         
 
                         //Collects the title of the LGA event
-                        IElement? titleElement = anchorElement.Children.FirstOrDefault(childContent =>
+                        IElement? titleElement = anchorElement?.Children.FirstOrDefault(childContent =>
                                 childContent.TagName == "DIV" &&
-                                childContent.ClassList.Contains("content-block"))
+                                childContent.ClassList.Contains("content-block"))!
                             .Children.SingleOrDefault(childContent => 
                                 childContent.TagName == "H4" &&
                                 childContent.TextContent != null &&
@@ -118,9 +118,9 @@ namespace services
                             childContent.TextContent != null &&
                             childContent.TagName == "DIV");*/
 
-                        IElement? contentDetailsElement = anchorElement.Children.FirstOrDefault(childContent =>
+                        IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
-                            childContent.ClassList.Contains("content-block"))
+                            childContent.ClassList.Contains("content-block"))!
                             .Children.SingleOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
                             childContent.ClassList.Contains("content-details"));
@@ -141,15 +141,15 @@ namespace services
                         //Splits the Start and End dates into 2 substrings
                         //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
                         ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
-                        (DateTime? Start, DateTime? End)? dates = parramattaWebsiteScraper.ParseDateString(eventDateElement.TextContent);
+                        (DateTime? Start, DateTime? End)? dates = parramattaWebsiteScraper.ParseDateString(eventDateElement!.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
                         return new LGA_Event
                         {
                             Title = titleElement?.TextContent,
                             Description = descriptionElement?.TextContent,
-                            StartDate = (DateTime)dates.Value.Start,
-                            EndDate = dates.Value.End
+                            StartDate = (DateTime)dates?.Start!,
+                            EndDate = dates?.End
                         };
                     }).ToList();
                 JsonFileManagement json = new JsonFileManagement();
