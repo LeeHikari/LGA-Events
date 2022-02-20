@@ -12,7 +12,7 @@ namespace Objects
             StartDate = _startDate;
             EndDate = _endDate;
             Id = WebUtility.HtmlEncode(StartDate.ToString("yyyy-MM-dd")+'-'+Title?.Replace(' ','-').ToLower());
-            EventImageUrl = _eventImageUrl;
+            EventImageUrl = _eventImageUrl!.Replace("background:url", "").Replace("\u0027", "").Replace("(", "").Replace(")", "");
             EventUrl = _eventUrl;
         }
         public string? Title { get; set; }

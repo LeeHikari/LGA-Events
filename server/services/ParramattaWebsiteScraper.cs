@@ -57,7 +57,7 @@ namespace services{
                         }
 
                         //Collects image URL
-                        IElement? imageElement = content.Children.SingleOrDefault(childContent =>
+                        IElement? imageElement = anchorElement?.Children.SingleOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
                             childContent.TextContent != null &&
                             childContent.ClassList.Contains("image-block"));
