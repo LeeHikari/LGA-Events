@@ -5,15 +5,20 @@ using AngleSharp.Html.Parser;
 namespace services{
     public class ParramattaWebsiteScraper{
         static string baseUrl = "https://atparramatta.com";
-        public (DateTime? Start, DateTime? End)? ParseDateString(string eventDate){
-            if(eventDate == null){
+        public (DateTime? Start, DateTime? End)? ParseDateString(string eventDate)
+        {
+            if(eventDate == null)
+            {
                 return null;
             }
 
             DateTime? startDate = new DateTime(2000, 1, 1);
             DateTime? endDate = null;
+
             int hyphenIndex = eventDate.IndexOf('-');
-            if(hyphenIndex == -1){
+
+            if(hyphenIndex == -1)
+            {
                 startDate = DateTime.Parse(eventDate);
             }
             else
@@ -21,6 +26,7 @@ namespace services{
                 startDate = DateTime.Parse(eventDate.Substring(0, hyphenIndex-1));
                 endDate = DateTime.Parse(eventDate.Substring(hyphenIndex+1));
             }
+
             return (startDate, endDate);
         }
 
@@ -63,7 +69,6 @@ namespace services{
                             imageUrl = baseUrl + imageElement.Attributes.GetNamedItem("style")?.Value;
                         }
 
-
                         //Collects the title of the LGA event
                         IElement? titleElement = anchorElement?.Children.FirstOrDefault(childContent =>
                                 childContent.TagName == "DIV" &&
@@ -98,7 +103,13 @@ namespace services{
                         (DateTime? Start, DateTime? End)? dates = ParseDateString(eventDateElement!.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
-                        return new LGA_Event(titleElement?.TextContent, descriptionElement?.TextContent, (DateTime)dates?.Start!, dates?.End, imageUrl, eventUrl);
+                        return new LGA_Event(
+                            titleElement?.TextContent, 
+                            descriptionElement?.TextContent, 
+                            (DateTime)dates?.Start!, 
+                            dates?.End, 
+                            imageUrl, 
+                            eventUrl);       
                     }).ToList();
 
                     return lgaEvents;
