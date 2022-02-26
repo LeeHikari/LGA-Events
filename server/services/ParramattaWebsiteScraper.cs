@@ -4,8 +4,6 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 namespace services{
     public class ParramattaWebsiteScraper{
-
-
         static string baseUrl = "https://atparramatta.com";
         public (DateTime? Start, DateTime? End)? ParseDateString(string eventDate){
             if(eventDate == null){
@@ -28,10 +26,8 @@ namespace services{
 
         public List<LGA_Event> ParramattaScrape(IHtmlDocument document)
         {
-                            List<LGA_Event> lgaEvents = new List<LGA_Event>();
+            List<LGA_Event> lgaEvents = new List<LGA_Event>();
 
-                //Creates a variable which stores a list of elements from a website where the class
-                //name equals "content-block and the tagName is a DIV.
                 lgaEvents = document.All
                 .Where(e =>
                     e.TagName == "DIV" &&
@@ -39,8 +35,6 @@ namespace services{
                     e.TextContent != null &&
                     e.Children.FirstOrDefault()!.TagName != "NAV")
 
-                    //Begins the select query by selecting the a list of class names which contain
-                    //title and the tagName is equals a H4 element.
                     .Select(content =>
                     {
                         //Collects event URL
@@ -79,8 +73,7 @@ namespace services{
                                 childContent.TextContent != null &&
                                 childContent.ClassList.Contains("title"));
 
-                        //Creates contentDetailsElement which is the child of the previous select statement
-                        //which is a class that contains "content-details" and is a DIV.
+                        //Parent HTML element of description and event date
                         IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
                             childContent.ClassList.Contains("content-block"))!
@@ -88,8 +81,7 @@ namespace services{
                             childContent.TagName == "DIV" &&
                             childContent.ClassList.Contains("content-details"));
 
-                        //contentDetailsElement selects its children which contain both "description"
-                        //and "event-date" class names.
+                        //Collects description of the LGA event
                         IElement? descriptionElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
                             childContent.ClassList.Contains("description") &&
                             childContent.TextContent != null &&

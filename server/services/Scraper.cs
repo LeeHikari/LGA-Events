@@ -55,10 +55,9 @@ namespace services
         }
 
         /// <summary>
-        /// Elements are found and selected from the Parramatta website before being sent off
-        /// to the ExportToJson method.
+        /// The LGA event object is seralised here if using the --cloud argument otherwise the program will run locally
         /// </summary>
-        /// <param name="document">Uses the variable which stores the website, allowing us to use it in the LINQ query</param>
+        /// <param name="document">LGA event object from websites which have been scraped</param>
         /// <returns>Returns the variable storing lgaEvents</returns>
 
         public async Task GetScrapeResults(IHtmlDocument document)
@@ -68,6 +67,7 @@ namespace services
                     ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
                     List<LGA_Event> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
 
+                //If using --cloud argument for dotnet run, this code will execute with cloud credientals 
                 if (this.usingCloud)
                 {
                     var options = new JsonSerializerOptions
@@ -94,6 +94,8 @@ namespace services
                     }
 
                 }
+
+                //If using dotnet run without an argument, this code will execute
                 else
                 {
                     var options = new JsonSerializerOptions
