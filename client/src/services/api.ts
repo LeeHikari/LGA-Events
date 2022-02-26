@@ -1,5 +1,6 @@
 import axios, { AxiosPromise } from 'axios'
+import { LGA_Event } from 'common/types'
 
-export function getColors(): AxiosPromise<string[]> {
-  return axios.get('http://localhost:5000/colors')
+export function getEvents(): AxiosPromise<LGA_Event[]> {
+  return axios.get('https://storage.googleapis.com/lgaevents/LGAInfo.json')
 }

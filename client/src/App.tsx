@@ -1,4 +1,4 @@
-import { ColorList } from 'components/ColorList'
+import { EventList } from 'components/EventList'
 import { normalizedStyles, globalStyles } from 'common/styles'
 import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
@@ -17,7 +17,7 @@ export function App(): JSX.Element {
           <Title>Example app</Title>
         </Header>
         <Main>
-          <ColorList />
+          <EventList />
         </Main>
       </Layout>
     </>

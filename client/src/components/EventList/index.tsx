@@ -1,20 +1,21 @@
 import { theme } from 'common/theme'
+import { LGA_Event } from 'common/types'
 import { useEffect, useState } from 'react'
-import { getColors } from 'services/api'
+import { getEvents } from 'services/api'
 import styled, { css } from 'styled-components'
 
-export function ColorList(): JSX.Element {
+export function EventList(): JSX.Element {
   const [loading, setLoading] = useState(true)
-  const [colors, setColors] = useState<string[]>([])
+  const [events, setEvents] = useState<LGA_Event[]>([])
 
   useEffect(() => {
-    loadColors()
+    loadEvents()
   }, [])
 
-  async function loadColors(): Promise<void> {
+  async function loadEvents(): Promise<void> {
     try {
-      const response = await getColors()
-      setColors(response.data)
+      const response = await getEvents()
+      setEvents(response.data)
     } catch (error) {
       console.error(error)
     } finally {
@@ -28,10 +29,9 @@ export function ColorList(): JSX.Element {
       {loading ? (
         <h3>loading...</h3>
       ) : (
-        colors.map((color) => (
+        events.map((event) => (
           <div style={{ position: 'relative', marginTop: '8px' }}>
-            <Name>{color}</Name>
-            <Color $color={color} />
+            <Event>{JSON.stringify(event)}</Event>
           </div>
         ))
       )}
@@ -39,21 +39,10 @@ export function ColorList(): JSX.Element {
   )
 }
 
-type ColorProps = {
-  $color: string
-}
-const Color = styled.div<ColorProps>`
+
+const Event = styled.div`
   border-radius: 10px;
   opacity: 0.5;
   padding: 16px;
   height: 20px;
-
-  ${({ $color }) =>
-    css`
-      background-color: ${$color};
-    `};
-`
-
-const Name = styled.div`
-  font-size: ${theme.fontSize.large};
 `
