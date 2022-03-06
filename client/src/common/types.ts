@@ -1,4 +1,4 @@
-export type LGA_Event = {
+export type LGAEvent = {
     title: string | null;
     description: string | null;
     startDate: string;

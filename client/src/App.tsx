@@ -3,6 +3,8 @@ import { normalizedStyles, globalStyles } from 'common/styles'
 import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 
+
+
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
 ${globalStyles}
@@ -17,7 +19,7 @@ export function App(): JSX.Element {
           <Title>Example app</Title>
         </Header>
         <Main>
-          <EventList />
+          <EventList/>
         </Main>
       </Layout>
     </>
