@@ -29,9 +29,9 @@ namespace services{
 
             return (startDate, endDate);
         }
-        public List<LGA_Event> ParramattaScrape(IHtmlDocument document)
+        public List<LGAEvent> ParramattaScrape(IHtmlDocument document)
         {
-            List<LGA_Event> lgaEvents = new List<LGA_Event>();
+            List<LGAEvent> lgaEvents = new List<LGAEvent>();
 
                 lgaEvents = document.All
                 .Where(e =>
@@ -102,7 +102,7 @@ namespace services{
                         (DateTime? Start, DateTime? End)? dates = ParseDateString(eventDateElement?.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
-                        return new LGA_Event(
+                        return new LGAEvent(
                             titleElement?.TextContent, 
                             descriptionElement?.TextContent, 
                             dates?.Start,
