@@ -9,14 +9,20 @@ type EventProps = {
 export function Event({ event }: EventProps): JSX.Element {
   return (
     <Container>
-      <div>{event.title}</div>
+      <h1>{event.title ?? ''}</h1>
+      <p>{event.description ?? ''}</p>
+      <p>
+        {event.startDate ?? ''}{event.endDate ?? ''}
+      </p>
+      <Image src={event.eventImageUrl ?? ''} alt="Placeholder" />
+      <a href={event.eventUrl ?? ''}>{event.title ?? ''}</a>
     </Container>
   )
 }
 
 const Container = styled.div`
-  border-radius: 10px;
-  opacity: 0.5;
-  padding: 16px;
-  height: 20px;
+
+`
+const Image = styled.img`
+
 `
