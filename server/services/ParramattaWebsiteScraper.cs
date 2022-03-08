@@ -5,7 +5,7 @@ using AngleSharp.Html.Parser;
 namespace services{
     public class ParramattaWebsiteScraper{
         static string baseUrl = "https://atparramatta.com";
-        public (DateTime? Start, DateTime? End)? ParseDateString(string eventDate)
+        public (DateTime? Start, DateTime? End)? ParseDateString(string? eventDate)
         {
             if(eventDate == null)
             {
@@ -29,7 +29,6 @@ namespace services{
 
             return (startDate, endDate);
         }
-
         public List<LGA_Event> ParramattaScrape(IHtmlDocument document)
         {
             List<LGA_Event> lgaEvents = new List<LGA_Event>();
@@ -72,7 +71,7 @@ namespace services{
                         //Collects the title of the LGA event
                         IElement? titleElement = anchorElement?.Children.FirstOrDefault(childContent =>
                                 childContent.TagName == "DIV" &&
-                                childContent.ClassList.Contains("content-block"))!
+                                childContent.ClassList.Contains("content-block"))?
                             .Children.SingleOrDefault(childContent =>
                                 childContent.TagName == "H4" &&
                                 childContent.TextContent != null &&
@@ -81,7 +80,7 @@ namespace services{
                         //Parent HTML element of description and event date
                         IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
-                            childContent.ClassList.Contains("content-block"))!
+                            childContent.ClassList.Contains("content-block"))?
                             .Children.SingleOrDefault(childContent =>
                             childContent.TagName == "DIV" &&
                             childContent.ClassList.Contains("content-details"));
@@ -100,13 +99,13 @@ namespace services{
 
                         //Splits the Start and End dates into 2 substrings
                         //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
-                        (DateTime? Start, DateTime? End)? dates = ParseDateString(eventDateElement!.TextContent);
+                        (DateTime? Start, DateTime? End)? dates = ParseDateString(eventDateElement?.TextContent);
 
                         //The LGAEvent object links up with all previous variables here
                         return new LGA_Event(
                             titleElement?.TextContent, 
                             descriptionElement?.TextContent, 
-                            (DateTime)dates?.Start!, 
+                            dates?.Start,
                             dates?.End, 
                             imageUrl, 
                             eventUrl);       
