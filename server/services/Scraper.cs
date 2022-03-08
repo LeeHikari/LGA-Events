@@ -64,8 +64,8 @@ namespace services
         {
             try
             {
-                    ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
-                    List<LGA_Event> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
+                ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
+                List<LGA_Event> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
 
                 //If using --cloud argument for dotnet run, this code will execute with cloud credientals 
                 if (this.usingCloud)
@@ -73,7 +73,7 @@ namespace services
                     var options = new JsonSerializerOptions
                     {
                         WriteIndented = true,
-                        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     };
 
                     var serialized = JsonSerializer.Serialize(lgaEvents, options);
@@ -81,14 +81,14 @@ namespace services
                     try
                     {
                         var credential = GoogleCredential.GetApplicationDefault();
-                            var storage = StorageClient.Create(credential);
+                        var storage = StorageClient.Create(credential);
                         byte[] byteArray = Encoding.UTF8.GetBytes(serialized);
                         MemoryStream stream = new MemoryStream(byteArray);
 
 
-                        storage.UploadObject("lgaevents", "LGAInfo.json", "application/octet-stream", stream);
+                        storage.UploadObject("lgaevents", "LGAInfo.json", "application/octet-stream", stream );
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
@@ -101,7 +101,7 @@ namespace services
                     var options = new JsonSerializerOptions
                     {
                         WriteIndented = true,
-                        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     };
 
                     var serialized = JsonSerializer.Serialize(lgaEvents, options);
