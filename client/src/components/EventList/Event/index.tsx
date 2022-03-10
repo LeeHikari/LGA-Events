@@ -12,8 +12,9 @@ export function Event({ event }: EventProps): JSX.Element {
       <h1>{event.title ?? ''}</h1>
       <p>{event.description ?? ''}</p>
       <p>
-        {event.startDate ?? ''}{event.endDate ?? ''}
-      </p>
+            {formatDate(event.startDate)}
+            {event.endDate && ` - ${formatDate(event.endDate)}`}
+          </p>
       <Image src={event.eventImageUrl ?? ''} alt="Placeholder" />
       <a href={event.eventUrl ?? ''}>{event.title ?? ''}</a>
     </Container>
