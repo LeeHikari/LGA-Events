@@ -1,9 +1,9 @@
 export type LGAEvent = {
-    title: string | null;
+    title: string;
     description: string | null;
     startDate: Date;
     endDate: Date | null;
     id: string;
-    eventImageUrl: string | null;
-    eventUrl: string | null;
+    eventImageUrl: string;
+    eventUrl: string;
 }
