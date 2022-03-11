@@ -16,7 +16,7 @@ export function App(): JSX.Element {
       <GlobalStyle />
       <Layout>
         <Header>
-          <Title>Example app</Title>
+          <Title>LGA Events</Title>
         </Header>
         <Main>
           <EventList/>
@@ -27,11 +27,6 @@ export function App(): JSX.Element {
 }
 
 const Layout = styled.div`
-  display: grid;
-  grid-template-areas:
-    'header'
-    'main';
-  grid-template-rows: 100px 1fr;
   min-width: 100vw;
   min-height: 100vh;
 `
@@ -47,7 +42,8 @@ const Title = styled.h1`
 `
 
 const Main = styled.div`
-  grid-area: main;
+  display: grid;
+
   background-color: ${theme.color.secondary.background};
   padding: 16px;
 `
