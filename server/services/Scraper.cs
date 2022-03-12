@@ -67,6 +67,7 @@ namespace services
                 ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
                 List<LGAEvent> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
 
+
                 //If using --cloud argument for dotnet run, this code will execute with cloud credientals 
                 if (this.usingCloud)
                 {
