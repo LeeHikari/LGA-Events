@@ -1,4 +1,4 @@
-import { ColorList } from 'components/ColorList'
+import { EventList } from 'components/EventList'
 import { normalizedStyles, globalStyles } from 'common/styles'
 import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
@@ -14,10 +14,10 @@ export function App(): JSX.Element {
       <GlobalStyle />
       <Layout>
         <Header>
-          <Title>Example app</Title>
+          <Title>LGA Events</Title>
         </Header>
         <Main>
-          <ColorList />
+          <EventList />
         </Main>
       </Layout>
     </>
@@ -25,11 +25,6 @@ export function App(): JSX.Element {
 }
 
 const Layout = styled.div`
-  display: grid;
-  grid-template-areas:
-    'header'
-    'main';
-  grid-template-rows: 100px 1fr;
   min-width: 100vw;
   min-height: 100vh;
 `
@@ -45,7 +40,6 @@ const Title = styled.h1`
 `
 
 const Main = styled.div`
-  grid-area: main;
   background-color: ${theme.color.secondary.background};
   padding: 16px;
 `

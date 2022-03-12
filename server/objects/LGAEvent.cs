@@ -4,6 +4,7 @@ namespace Objects
 {
     public class LGAEvent
     {
+
         public LGAEvent(string _title, string? _description, DateTime _startDate, DateTime? _endDate, string _eventImageUrl, string _eventUrl)
         {
             Title = _title;

@@ -55,25 +55,26 @@ namespace services
         }
 
         /// <summary>
-        /// Elements are found and selected from the Parramatta website before being sent off
-        /// to the ExportToJson method.
+        /// The LGA event object is seralised here if using the --cloud argument otherwise the program will run locally
         /// </summary>
-        /// <param name="document">Uses the variable which stores the website, allowing us to use it in the LINQ query</param>
+        /// <param name="document">LGA event object from websites which have been scraped</param>
         /// <returns>Returns the variable storing lgaEvents</returns>
 
         public async Task GetScrapeResults(IHtmlDocument document)
         {
             try
             {
-                    ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
-                    List<LGAEvent> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
+                ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
+                List<LGAEvent> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
 
+
+                //If using --cloud argument for dotnet run, this code will execute with cloud credientals 
                 if (this.usingCloud)
                 {
                     var options = new JsonSerializerOptions
                     {
                         WriteIndented = true,
-                        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     };
 
                     var serialized = JsonSerializer.Serialize(lgaEvents, options);
@@ -81,25 +82,27 @@ namespace services
                     try
                     {
                         var credential = GoogleCredential.GetApplicationDefault();
-                            var storage = StorageClient.Create(credential);
+                        var storage = StorageClient.Create(credential);
                         byte[] byteArray = Encoding.UTF8.GetBytes(serialized);
                         MemoryStream stream = new MemoryStream(byteArray);
 
 
-                        storage.UploadObject("lgaevents", "LGAInfo.json", "application/octet-stream", stream);
+                        storage.UploadObject("lgaevents", "LGAInfo.json", "application/octet-stream", stream );
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
 
                 }
+
+                //If using dotnet run without an argument, this code will execute
                 else
                 {
                     var options = new JsonSerializerOptions
                     {
                         WriteIndented = true,
-                        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     };
 
                     var serialized = JsonSerializer.Serialize(lgaEvents, options);

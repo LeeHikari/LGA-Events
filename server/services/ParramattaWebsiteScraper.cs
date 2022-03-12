@@ -2,6 +2,7 @@ using Objects;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+
 namespace services
 {
     public class ParramattaWebsiteScraper
@@ -153,7 +154,7 @@ namespace services
             DateTime? endDate = null;
 
             int hyphenIndex = eventDate.IndexOf('-');
-
+          
             try
             {
                 if (hyphenIndex == -1)
@@ -165,6 +166,11 @@ namespace services
                     startDate = DateTime.Parse(eventDate.Substring(0, hyphenIndex - 1));
                     endDate = DateTime.Parse(eventDate.Substring(hyphenIndex + 1));
                 }
+
+            if(hyphenIndex == -1)
+            {
+                startDate = DateTime.Parse(eventDate);
+
             }
             catch
             {
