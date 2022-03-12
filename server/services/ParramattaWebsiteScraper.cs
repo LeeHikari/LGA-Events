@@ -2,114 +2,215 @@ using Objects;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-namespace services{
-    public class ParramattaWebsiteScraper{
-
-
+namespace services
+{
+    public class ParramattaWebsiteScraper
+    {
         static string baseUrl = "https://atparramatta.com";
-        public (DateTime? Start, DateTime? End)? ParseDateString(string eventDate){
-            if(eventDate == null){
-                return null;
-            }
-
-            DateTime? startDate = new DateTime(2000, 1, 1);
-            DateTime? endDate = null;
-            int hyphenIndex = eventDate.IndexOf('-');
-            if(hyphenIndex == -1){
-                startDate = DateTime.Parse(eventDate);
-            }
-            else
-            {
-                startDate = DateTime.Parse(eventDate.Substring(0, hyphenIndex-1));
-                endDate = DateTime.Parse(eventDate.Substring(hyphenIndex+1));
-            }
-            return (startDate, endDate);
-        }
-
-        public List<LGA_Event> ParramattaScrape(IHtmlDocument document)
+        public List<LGAEvent> ParramattaScrape(IHtmlDocument document)
         {
-                            List<LGA_Event> lgaEvents = new List<LGA_Event>();
-
-                //Creates a variable which stores a list of elements from a website where the class
-                //name equals "content-block and the tagName is a DIV.
-                lgaEvents = document.All
+            IEnumerable<IElement> elements = document.All
                 .Where(e =>
                     e.TagName == "DIV" &&
                     e.ClassList.Contains("col") &&
                     e.TextContent != null &&
-                    e.Children.FirstOrDefault()!.TagName != "NAV")
+                    e.Children.First()?.TagName != "NAV");
 
-                    //Begins the select query by selecting the a list of class names which contain
-                    //title and the tagName is equals a H4 element.
-                    .Select(content =>
-                    {
-                        //Collects event URL
-                        IElement? anchorElement = content.Children.SingleOrDefault(childContent =>
-                            childContent.TagName == "A" &&
-                            childContent.TextContent != null &&
-                            childContent.ClassList.Contains("col-wrap"));
+            var lgaEvents = new List<LGAEvent>();
 
-                        string? eventUrl = null;
+            IElement? anchorElement = null;
+            string? eventUrl = null;
+            string? imageUrl = null;
+            string? title = null;
+            string? description = null;
+            IElement? contentDetailsElement = null;
+            (DateTime startDate, DateTime? endDate) dates = (new DateTime(), null);
 
-                        if (anchorElement != null)
-                        {
-                            eventUrl = baseUrl + anchorElement.Attributes.GetNamedItem("href")?.Value;
-                        }
+            for (int i = 0; i < elements.Count(); i++)
+            {
+                IElement content = elements.ElementAt(i);
 
-                        //Collects image URL
-                        IElement? imageElement = anchorElement?.Children.SingleOrDefault(childContent =>
-                            childContent.TagName == "DIV" &&
-                            childContent.TextContent != null &&
-                            childContent.ClassList.Contains("image-block"));
+                imageUrl = GetImageURL(content);
+                if (imageUrl == null)
+                {
+                    continue;
+                }
 
-                        string? imageUrl = null;
+                anchorElement = GetAnchorElement(content);
+                if (anchorElement == null)
+                {
+                    continue;
+                }
 
-                        if (imageElement != null)
-                        {
-                            imageUrl = baseUrl + imageElement.Attributes.GetNamedItem("style")?.Value;
-                        }
+                title = GetTitle(anchorElement);
+                if (title == null)
+                {
+                    continue;
+                }
+
+                eventUrl = GetEventUrl(content, anchorElement);
+                if (eventUrl == null)
+                {
+                    continue;
+                }
+
+                contentDetailsElement = GetContentDetails(anchorElement);
+                if (contentDetailsElement == null)
+                {
+                    continue;
+                }
+
+                dates = GetEventDates(contentDetailsElement);
+                if (dates.HasValue == false)
+                {
+                    continue;
+                }
+
+                description = GetDescription(contentDetailsElement);
+
+                lgaEvents.Add(new LGAEvent(
+                        title,
+                        description,
+                        dates.startDate,
+                        dates.endDate,
+                        imageUrl,
+                        eventUrl));
+            }
+
+            return lgaEvents;
+        }
+
+        IElement? GetAnchorElement(IElement content)
+        {
+            return content.Children.SingleOrDefault(child =>
+                child.TagName == "A" &&
+                child.TextContent != null &&
+                child.ClassList.Contains("col-wrap"));
+        }
+
+        string? GetEventUrl(IElement content, IElement? anchorElement)
+        {
+            if (anchorElement == null)
+            {
+                return null;
+            }
+
+            var anchorHref = anchorElement.Attributes.GetNamedItem("href");
+            if (anchorHref == null)
+            {
+                return null;
+            }
+
+            return baseUrl + anchorHref.Value;
+        }
+
+        string? GetImageURL(IElement? content)
+        {
+            IElement? imageElement = content?.Children.SingleOrDefault(childContent =>
+                        childContent.TagName == "DIV" &&
+                        childContent.TextContent != null &&
+                        childContent.ClassList.Contains("image-block"));
+
+            if (imageElement == null)
+            {
+                return null;
+            }
+
+            var imageHref = imageElement?.Attributes.GetNamedItem("href");
+            if (imageHref == null)
+            {
+                return null;
+            }
+
+            return baseUrl + imageHref.Value;
+        }
+
+        string? GetTitle(IElement? anchorElement)
+        {
+            IElement? titleElement = anchorElement?.Children.FirstOrDefault(childContent =>
+                    childContent.TagName == "DIV" &&
+                    childContent.ClassList.Contains("content-block"))?
+                .Children.FirstOrDefault(childContent =>
+                    childContent.TagName == "H4" &&
+                    childContent.ClassList.Contains("title"));
+
+            return titleElement?.TextContent;
+        }
+
+        string? GetDescription(IElement? contentDetailsElement)
+        {
+            IElement? descriptionElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                childContent.ClassList.Contains("description") &&
+                childContent.TextContent != null &&
+                childContent.TagName == "DIV");
+            return descriptionElement?.TextContent;
+        }
 
 
-                        //Collects the title of the LGA event
-                        IElement? titleElement = anchorElement?.Children.FirstOrDefault(childContent =>
-                                childContent.TagName == "DIV" &&
-                                childContent.ClassList.Contains("content-block"))!
-                            .Children.SingleOrDefault(childContent =>
-                                childContent.TagName == "H4" &&
-                                childContent.TextContent != null &&
-                                childContent.ClassList.Contains("title"));
+        (DateTime startDate, DateTime? endDate)? ParseDateString(string eventDate)
+        {
+            var startDate = new DateTime();
+            DateTime? endDate = null;
 
-                        //Creates contentDetailsElement which is the child of the previous select statement
-                        //which is a class that contains "content-details" and is a DIV.
-                        IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
-                            childContent.TagName == "DIV" &&
-                            childContent.ClassList.Contains("content-block"))!
-                            .Children.SingleOrDefault(childContent =>
-                            childContent.TagName == "DIV" &&
-                            childContent.ClassList.Contains("content-details"));
+            int hyphenIndex = eventDate.IndexOf('-');
 
-                        //contentDetailsElement selects its children which contain both "description"
-                        //and "event-date" class names.
-                        IElement? descriptionElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
-                            childContent.ClassList.Contains("description") &&
-                            childContent.TextContent != null &&
-                            childContent.TagName == "DIV");
+            try
+            {
+                if (hyphenIndex == -1)
+                {
+                    startDate = DateTime.Parse(eventDate);
+                }
+                else
+                {
+                    startDate = DateTime.Parse(eventDate.Substring(0, hyphenIndex - 1));
+                    endDate = DateTime.Parse(eventDate.Substring(hyphenIndex + 1));
+                }
+            }
+            catch
+            {
+                // Exceptions should be handled correctly. Shouldn't be used for pathways.
+                // Should set the values manually to null if they fail via TryParse.
+                return null;
+            }
 
-                        //Collects the start and end dates for the LGA event
-                        IElement? eventDateElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
-                            childContent.ClassList.Contains("event-date") &&
-                            childContent.TextContent != null &&
-                            childContent.TagName == "DIV");
+            return (startDate, endDate);
+        }
 
-                        //Splits the Start and End dates into 2 substrings
-                        //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
-                        (DateTime? Start, DateTime? End)? dates = ParseDateString(eventDateElement!.TextContent);
+        (DateTime startDate, DateTime? endDate)? GetEventDates(IElement? contentDetailsElement)
+        {
+            if (contentDetailsElement == null)
+            {
+                return null;
+            }
 
-                        //The LGAEvent object links up with all previous variables here
-                        return new LGA_Event(titleElement?.TextContent, descriptionElement?.TextContent, (DateTime)dates?.Start!, dates?.End, imageUrl, eventUrl);
-                    }).ToList();
+            IElement? eventDateElement = contentDetailsElement?.Children.SingleOrDefault(childContent =>
+                childContent.ClassList.Contains("event-date") &&
+                childContent.TextContent != null &&
+                childContent.TagName == "DIV");
 
-                    return lgaEvents;
+            if (eventDateElement?.TextContent == null)
+            {
+                return null;
+            }
+
+            //Splits the Start and End dates into 2 substrings
+            //It does this by identifying the index of the hyphen and then creating 2 substrings using the index
+            return ParseDateString(eventDateElement.TextContent);
+        }
+
+        /// <summary>
+        /// Gets the parent HTML element of description and event date.
+        /// </summary>
+        IElement? GetContentDetails(IElement? anchorElement)
+        {
+            IElement? contentDetailsElement = anchorElement?.Children.FirstOrDefault(childContent =>
+                childContent.TagName == "DIV" &&
+                childContent.ClassList.Contains("content-block"))?
+                .Children.SingleOrDefault(childContent =>
+                childContent.TagName == "DIV" &&
+                childContent.ClassList.Contains("content-details"));
+
+            return contentDetailsElement;
         }
     }
 }
