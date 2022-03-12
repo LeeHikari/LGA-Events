@@ -3,8 +3,6 @@ import { normalizedStyles, globalStyles } from 'common/styles'
 import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 
-
-
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
 ${globalStyles}
@@ -19,7 +17,7 @@ export function App(): JSX.Element {
           <Title>LGA Events</Title>
         </Header>
         <Main>
-          <EventList/>
+          <EventList />
         </Main>
       </Layout>
     </>
@@ -42,8 +40,6 @@ const Title = styled.h1`
 `
 
 const Main = styled.div`
-  display: grid;
-
   background-color: ${theme.color.secondary.background};
   padding: 16px;
 `
