@@ -66,7 +66,7 @@ namespace services
             try
             {
                     ParramattaWebsiteScraper parramattaWebsiteScraper = new ParramattaWebsiteScraper();
-                    List<LGA_Event> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
+                    List<LGAEvent> lgaEvents = parramattaWebsiteScraper.ParramattaScrape(document);
 
                 if (this.usingCloud)
                 {
