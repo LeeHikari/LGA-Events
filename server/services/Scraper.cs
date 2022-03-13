@@ -22,7 +22,7 @@ namespace services
         }
 
         /// <summary>
-        ///     Uses a Anglesharp in order to create a connection to a website we wish to webscrape
+        ///  Uses a Anglesharp in order to create a connection to a website we wish to webscrape
         /// </summary>
         /// <returns>Returns the website inside of a IHtmlDocument variable to GetScrapeResults</returns>
         public async Task Scrape()
