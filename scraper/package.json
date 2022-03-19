@@ -1,11 +1,11 @@
 {
-  "name": "server",
+  "name": "scraper",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "main": "dist/server.js",
+  "main": "dist/scraper.js",
   "scripts": {
-    "start": "chokidar src/*.ts --initial --silent -c \"tsc && node dist/server.js\""
+    "start": "chokidar src/*.ts --initial --silent -c \"tsc && node dist/scraper.js\""
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^4.21.0",
