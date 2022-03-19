@@ -1,0 +1,63 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "chokidar src/*.ts --initial --silent -c \"tsc && node dist/server.js\""
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.11",
+    "@types/inquirer": "^7.3.1",
+    "@types/jsonwebtoken": "^8.5.1",
+    "@types/tcp-port-used": "^1.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "chokidar-cli": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.24.0",
+    "eslint-plugin-import": "^2.22.1",
+    "express": "^4.17.1",
+    "inquirer": "^8.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "tcp-port-used": "^1.0.2",
+    "typescript": "^4.2.4"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "no-shadow": "warn",
+      "no-bitwise": "warn",
+      "no-else-return": "warn",
+      "no-lonely-if": "warn",
+      "prefer-arrow-callback": "warn",
+      "prefer-const": "warn",
+      "prefer-template": "warn",
+      "no-console": "warn",
+      "no-alert": "warn",
+      "no-const-assign": "warn",
+      "no-unexpected-multiline": "error",
+      "@typescript-eslint/explicit-function-return-type": [
+        "error",
+        {
+          "allowExpressions": true
+        }
+      ],
+      "@typescript-eslint/ban-ts-ignore": "off"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
+}

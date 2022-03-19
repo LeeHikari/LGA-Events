@@ -1,6 +1,7 @@
 LGAInfo.json
 bin/
 obj/
+dist/
 .vscode/
 node_modules/
 global.json
