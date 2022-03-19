@@ -1,0 +1,54 @@
+{
+  "name": "scraper",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/scraper.js",
+  "scripts": {
+    "start": "chokidar src/*.ts --initial --silent -c \"tsc && node dist/scraper.js\""
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "chokidar-cli": "^2.1.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.24.0",
+    "eslint-plugin-import": "^2.22.1",
+    "playwright": "^1.20.0",
+    "typescript": "^4.2.4"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "no-shadow": "warn",
+      "no-bitwise": "warn",
+      "no-else-return": "warn",
+      "no-lonely-if": "warn",
+      "prefer-arrow-callback": "warn",
+      "prefer-const": "warn",
+      "prefer-template": "warn",
+      "no-console": "warn",
+      "no-alert": "warn",
+      "no-const-assign": "warn",
+      "no-unexpected-multiline": "error",
+      "@typescript-eslint/explicit-function-return-type": [
+        "error",
+        {
+          "allowExpressions": true
+        }
+      ],
+      "@typescript-eslint/ban-ts-ignore": "off"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
+}
