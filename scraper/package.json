@@ -4,8 +4,9 @@
   "license": "MIT",
   "private": true,
   "main": "dist/scraper.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "chokidar src/*.ts --initial --silent -c \"tsc && node dist/scraper.js\""
+    "start": "chokidar src/**/*.ts --initial --silent -c \"tsc && node dist/scraper.js\""
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^4.21.0",
