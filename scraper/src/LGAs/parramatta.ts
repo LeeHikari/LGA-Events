@@ -8,19 +8,26 @@ export async function ScrapeParramattaElements(
   await page.goto('https://atparramatta.com/whats-on')
   await browser.close()
   const events: LGAEvent[] = await page.$$eval(
-    '.product_pod',
+    '.col-wrap',
     (elements: HTMLElement[]) => {
       return elements.map((event): LGAEvent => {
+        const dates = page.locator('div:event-dates').textContent.toString()
         return {
-          title: event.querySelector('div')?.innerText || '',
+          title: page.locator('div:title').textContent.toString() || '',
           description: event.querySelector('div')?.innerText || null,
           startDate:
-            new Date(Date.parse(event.querySelector('div')?.innerText || '')) ||
-            new Date(),
+            new Date(
+              Date.parse(dates.substring(0, dates.indexOf('-') - 1) || '')
+            ) || new Date(),
           endDate:
-            new Date(Date.parse(event.querySelector('div')?.innerText || '')) ||
-            new Date(),
-          id: event.querySelector('div')?.innerText || '',
+            new Date(
+              Date.parse(dates.substring(dates.indexOf('-') + 1) || '')
+            ) || new Date(),
+          id:
+            `${dates.substring(0, dates.indexOf('-'))}-${page
+              .locator('div:title')
+              .textContent.toString()
+              .replace(' ', '-')}` || '',
           eventImageUrl: event.querySelector('div')?.innerText || '',
           eventUrl: event.querySelector('div')?.innerText || '',
         }
