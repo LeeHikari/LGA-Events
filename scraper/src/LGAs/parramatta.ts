@@ -127,7 +127,6 @@ export async function scrapeParramatta(
     console.log(events)
   } catch (error) {
     console.error('\x1b[41m%s\x1b[0m', `Parramatta - ${error}`)
-    const events: LGAEvent[] = []
   }
   return events
 }

@@ -1,10 +1,7 @@
 import { LGAEvent } from './types'
-import { appendFile } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 
 export async function ExportToJson(events: LGAEvent[]): Promise<void> {
   const jsonLGAEventString = JSON.stringify(events)
-  await appendFile(
-    `${__filename}\\..\\..\\..\\src\\LGAEvents.json`,
-    jsonLGAEventString
-  )
+  await writeFile('.\\dist\\LGAEvents.json', jsonLGAEventString)
 }
