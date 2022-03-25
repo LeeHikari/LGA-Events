@@ -3,7 +3,7 @@ import playwright from 'playwright'
 
 export async function scrapeParramatta(
   browser: playwright.Browser
-): Promise<void> {
+): Promise<LGAEvent[]> {
   try {
     const baseUrl = 'https://atparramatta.com'
     const page = await browser.newPage()
@@ -89,8 +89,10 @@ export async function scrapeParramatta(
             if (!categoryElement?.textContent) {
               return null
             }
-            const category =
-              categoryElement.textContent.replaceAll(/\s{2,}|\n/g, '')
+            const category = categoryElement.textContent.replaceAll(
+              /\s{2,}|\n/g,
+              ''
+            )
 
             const description =
               anchorElement.querySelector(
@@ -122,7 +124,10 @@ export async function scrapeParramatta(
       baseUrl
     )
     console.log(events)
+    return events
   } catch (error) {
     console.error('\x1b[41m%s\x1b[0m', `Parramatta - ${error}`)
+    const events: LGAEvent[] = []
+    return events
   }
 }
