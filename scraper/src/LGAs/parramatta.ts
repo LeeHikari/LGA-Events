@@ -86,11 +86,11 @@ export async function scrapeParramatta(
             const categoryElement = anchorElement.querySelector(
               'div.content-block div.content-taxonomy'
             )
-            if (!categoryElement) {
+            if (!categoryElement?.textContent) {
               return null
             }
             const category =
-              categoryElement.textContent?.replaceAll(/\s{2,}|\n/g, '') || null
+              categoryElement.textContent.replaceAll(/\s{2,}|\n/g, '')
 
             const description =
               anchorElement.querySelector(
