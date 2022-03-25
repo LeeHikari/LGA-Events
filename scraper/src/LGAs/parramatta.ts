@@ -83,11 +83,20 @@ export async function scrapeParramatta(
               return null
             }
 
+            const categoryElement = anchorElement.querySelector(
+              'div.content-block div.content-taxonomy'
+            )
+            if (!categoryElement) {
+              return null
+            }
+            const category =
+              categoryElement.textContent?.replaceAll(/\s{2,}|\n/g, '') || null
+
             const description =
               anchorElement.querySelector(
                 'div.content-block div.content-details div.description'
               )?.textContent || null
-              
+
             const eventUrlParts = url.split('/')
             const id = encodeURIComponent(
               //encodeURIComponent converts special characters to be URI friendly
@@ -102,6 +111,7 @@ export async function scrapeParramatta(
               description,
               startDate,
               endDate,
+              category,
               id,
               imageUrl,
               url,

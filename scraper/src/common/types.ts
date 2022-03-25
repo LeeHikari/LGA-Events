@@ -3,6 +3,7 @@ export type LGAEvent = {
   description: string | null
   startDate: Date
   endDate: Date | null
+  category: string | null
   id: string
   imageUrl: string
   url: string
