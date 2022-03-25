@@ -3,7 +3,8 @@ import playwright from 'playwright'
 
 export async function scrapeParramatta(
   browser: playwright.Browser
-): Promise<void> {
+): Promise<LGAEvent[]> {
+  let events: LGAEvent[] = []
   try {
     const baseUrl = 'https://atparramatta.com'
     const page = await browser.newPage()
@@ -24,7 +25,7 @@ export async function scrapeParramatta(
     await page.click('text=Search Events')
 
     //TODO refactor to use https://playwright.dev/docs/api/class-locator#locator-evaluate-all instead
-    const events: LGAEvent[] = await page.$$eval(
+    events = await page.$$eval(
       'div.col',
       (eventElements: HTMLElement[], baseUrl) => {
         return eventElements
@@ -89,8 +90,10 @@ export async function scrapeParramatta(
             if (!categoryElement?.textContent) {
               return null
             }
-            const category =
-              categoryElement.textContent.replaceAll(/\s{2,}|\n/g, '')
+            const category = categoryElement.textContent.replaceAll(
+              /\s{2,}|\n/g,
+              ''
+            )
 
             const description =
               anchorElement.querySelector(
@@ -124,5 +127,7 @@ export async function scrapeParramatta(
     console.log(events)
   } catch (error) {
     console.error('\x1b[41m%s\x1b[0m', `Parramatta - ${error}`)
+    const events: LGAEvent[] = []
   }
+  return events
 }
