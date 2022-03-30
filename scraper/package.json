@@ -4,21 +4,25 @@
   "license": "MIT",
   "private": true,
   "main": "dist/scraper.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
-    "start": "chokidar src/**/*.ts --initial --silent -c \"tsc && node dist/scraper.js\""
+    "start": "chokidar src/**/*.ts --initial --silent -c \"tsc && node --experimental-specifier-resolution=node dist/scraper.js\""
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.21.0",
-    "@typescript-eslint/parser": "^4.21.0",
-    "chokidar-cli": "^2.1.0",
-    "dotenv": "^8.2.0",
-    "eslint": "^7.24.0",
-    "eslint-plugin-import": "^2.22.1",
-    "playwright": "^1.20.0",
-    "typescript": "^4.2.4"
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "chokidar-cli": "^3.0.0",
+    "dotenv": "^16.0.0",
+    "eslint": "^8.12.0",
+    "eslint-plugin-import": "^2.25.4",
+    "playwright": "^1.20.1",
+    "typescript": "^4.6.3"
   },
   "eslintConfig": {
+    "ignorePatterns": [
+      "dist",
+      "node_modules"
+    ],
     "parser": "@typescript-eslint/parser",
     "plugins": [
       "@typescript-eslint"
@@ -35,8 +39,7 @@
       "prefer-arrow-callback": "warn",
       "prefer-const": "warn",
       "prefer-template": "warn",
-      "no-console": "warn",
-      "no-alert": "warn",
+      "no-alert": "error",
       "no-const-assign": "warn",
       "no-unexpected-multiline": "error",
       "@typescript-eslint/explicit-function-return-type": [

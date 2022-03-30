@@ -24,10 +24,9 @@ export async function scrapeParramatta(
 
     await page.click('text=Search Events')
 
-    //TODO refactor to use https://playwright.dev/docs/api/class-locator#locator-evaluate-all instead
-    events = await page.$$eval(
-      'div.col',
-      (eventElements: HTMLElement[], baseUrl) => {
+    events = await page
+      .locator('div.col')
+      .evaluateAll((eventElements: HTMLElement[], pageUrl) => {
         return eventElements
           .map((eventElement): LGAEvent | null => {
             const anchorElement =
@@ -36,11 +35,11 @@ export async function scrapeParramatta(
               return null
             }
 
-            let url = anchorElement.getAttribute('href')
-            if (!url) {
+            let eventUrl = anchorElement.getAttribute('href')
+            if (!eventUrl) {
               return null
             }
-            url = `${baseUrl}${url}`
+            eventUrl = `${pageUrl}${eventUrl}`
 
             const imageElement =
               anchorElement.querySelector<HTMLElement>('div.image-block')
@@ -50,7 +49,7 @@ export async function scrapeParramatta(
             const backgroundProperty = imageElement.style.background
             const from = backgroundProperty.indexOf('"') + 1
             const to = backgroundProperty.lastIndexOf('"')
-            const imageUrl = `${baseUrl}${backgroundProperty.slice(from, to)}`
+            const imageUrl = `${pageUrl}${backgroundProperty.slice(from, to)}`
 
             const dateString =
               anchorElement.querySelector(
@@ -61,10 +60,14 @@ export async function scrapeParramatta(
             }
 
             const dateStringParts = dateString.split(' - ')
-            if (dateStringParts.length === 0 || dateStringParts.length > 2) {
+            if (
+              dateStringParts.length === 0 ||
+              dateStringParts.length > 2 ||
+              !dateStringParts[0]
+            ) {
               throw new Error(
-                `Date format has changed on ${baseUrl} Received ${JSON.stringify(
-                  { dateStringParts, url }
+                `Date format has changed on ${pageUrl} Received ${JSON.stringify(
+                  { dateStringParts, eventUrl }
                 )}`
               )
             }
@@ -100,7 +103,7 @@ export async function scrapeParramatta(
                 'div.content-block div.content-details div.description'
               )?.textContent || null
 
-            const eventUrlParts = url.split('/')
+            const eventUrlParts = eventUrl.split('/')
             const id = encodeURIComponent(
               //encodeURIComponent converts special characters to be URI friendly
               `${startDate.toJSON().split('T')[0]}-${
@@ -117,13 +120,11 @@ export async function scrapeParramatta(
               category,
               id,
               imageUrl,
-              url,
+              url: eventUrl,
             }
           })
           .filter((event): event is LGAEvent => event !== null)
-      },
-      baseUrl
-    )
+      }, baseUrl)
     console.log(events)
   } catch (error) {
     console.error('\x1b[41m%s\x1b[0m', `Parramatta - ${error}`)
