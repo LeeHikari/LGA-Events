@@ -6,7 +6,9 @@
   "main": "dist/scraper.js",
   "type": "module",
   "scripts": {
-    "start": "chokidar \"src/**/*.ts\" --initial --silent -c \"tsc && node --experimental-specifier-resolution=node dist/scraper.js\""
+    "start": "chokidar \"src/**/*.ts\" --initial --silent -c \"tsc && node --experimental-specifier-resolution=node dist/scraper.js\"",
+    "dev": "chokidar \"src/**/*.ts\" --initial --silent -c \"tsc && node --experimental-specifier-resolution=node dist/scraper.js --dev\"",
+    "log": "chokidar \"src/**/*.ts\" --initial --silent -c \"tsc && node --experimental-specifier-resolution=node dist/scraper.js --log\""
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.17.0",
