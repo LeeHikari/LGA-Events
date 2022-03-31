@@ -10,12 +10,13 @@ export async function ExportToJson(events: LGAEvent[]): Promise<void> {
   try {
     if (!fs.existsSync('out')) {
       fs.mkdirSync('out')
+      exportingJson.succeed(chalk.blue(`Out file created`))
     }
 
     await writeFile('out/LGAEvents.json', JSON.stringify(events))
 
-    exportingJson.succeed(chalk.blue(`Exporting to JSON successful`))
+    exportingJson.succeed(chalk.blue(`Export to JSON successful`))
   } catch (error) {
-    exportingJson.fail(chalk.red(`Exporting to JSON failed - ${error}`))
+    exportingJson.fail(chalk.red(`Export to JSON failed - ${error}`))
   }
 }
