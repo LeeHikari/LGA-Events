@@ -1,17 +1,20 @@
-import playwright from 'playwright'
+import { webkit } from 'playwright'
 import { LGAEvent } from './common/types'
 import { ExportToJson } from './common/utils'
 import { scrapeParramatta } from './LGAs/parramatta'
+import ora from 'ora'
+import chalk from 'chalk'
 
 export async function start(): Promise<void> {
-  console.log('\x1b[44m%s\x1b[0m', 'launch')
-  const browser = await playwright.webkit.launch()
-
-  console.log('\x1b[44m%s\x1b[0m', 'launched')
-  const events: LGAEvent[] = await scrapeParramatta(browser)
+  const launchingBrowser = ora('Launching browser').start()
+  const browser = await webkit.launch()
+  const context = await browser.newContext()
+  launchingBrowser.succeed(chalk.blue('Browser launched successfully'))
+  
+  const events: LGAEvent[] = await scrapeParramatta(await context.newPage())
 
   await browser.close()
-  console.log('\x1b[44m%s\x1b[0m', 'closed')
+  launchingBrowser.succeed(chalk.blue('Scraping finished'))
 
   await ExportToJson(events)
 }

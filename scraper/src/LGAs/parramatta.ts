@@ -1,14 +1,13 @@
 import { LGAEvent } from '../common/types'
-import playwright from 'playwright'
+import { Page } from 'playwright'
+import ora from 'ora'
+import chalk from 'chalk'
 
-export async function scrapeParramatta(
-  browser: playwright.Browser
-): Promise<LGAEvent[]> {
+export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
+  const baseUrl = 'https://atparramatta.com'
+  const retrievingElements = ora(`${baseUrl}/whats-on - Getting Elements`)
   let events: LGAEvent[] = []
   try {
-    const baseUrl = 'https://atparramatta.com'
-    const page = await browser.newPage()
-
     // Only used for dev logging purposes
     // page.$$eval executes code on a headless browser,
     // so console.logs inside this function will not appear on the node console.
@@ -125,9 +124,12 @@ export async function scrapeParramatta(
           })
           .filter((event): event is LGAEvent => event !== null)
       }, baseUrl)
+    retrievingElements.succeed(
+      chalk.blue(`${baseUrl}/whats-on - Successfully scraped`)
+    )
     console.log(events)
   } catch (error) {
-    console.error('\x1b[41m%s\x1b[0m', `Parramatta - ${error}`)
+    retrievingElements.fail(chalk.red(`${baseUrl}/whats-on - ${error}`))
   }
   return events
 }
