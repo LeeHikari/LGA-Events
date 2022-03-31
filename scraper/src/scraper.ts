@@ -9,7 +9,7 @@ export async function start(): Promise<void> {
   const launchingBrowser = ora('Launching browser').start()
   const browser = await webkit.launch()
   const context = await browser.newContext()
-  launchingBrowser.succeed(chalk.blue('Browser launched successfully'))
+  launchingBrowser.succeed(chalk.yellow.inverse('Browser launched successfully'))
 
   const events: LGAEvent[] = await scrapeParramatta(await context.newPage())
 
@@ -21,7 +21,7 @@ export async function start(): Promise<void> {
   }
   
   await browser.close()
-  launchingBrowser.succeed(chalk.blue('Scraping finished'))
+  launchingBrowser.succeed(chalk.yellow.inverse('Scraping finished'))
 }
 
 start()
