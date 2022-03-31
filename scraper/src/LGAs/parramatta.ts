@@ -127,7 +127,6 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
     retrievingElements.succeed(
       chalk.blue(`${baseUrl}/whats-on - Successfully scraped`)
     )
-    console.log(events)
   } catch (error) {
     retrievingElements.fail(chalk.red(`${baseUrl}/whats-on - ${error}`))
   }
