@@ -5,4 +5,5 @@ out/
 .vscode/
 node_modules/
 yarn-error.log
+config.env
 .DS_Store
