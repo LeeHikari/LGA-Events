@@ -5,6 +5,6 @@ export type LGAEvent = {
   endDate: Date | null
   id: string
   imageUrl: string
-  eventUrl: string
+  url: string
   category: string | null
 }

@@ -10,7 +10,7 @@ type EventProps = {
 export function Event({ event }: EventProps): JSX.Element {
   return (
     <Container
-      href={event.eventUrl}
+      href={event.url}
       style={{ textDecorationLine: 'none' }}
       target="_blank"
       rel="noreferrer"
@@ -41,6 +41,7 @@ const Container = styled.a`
   &:hover {
     box-shadow: -4px 4px 6px 0 rgba(0, 0, 0, 0.3);
     transform: translateX(4px);
+    cursor: pointer;
   }
 `
 
