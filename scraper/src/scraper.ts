@@ -3,11 +3,7 @@ import { LGAEvent } from './common/types'
 import { exportToJson, uploadToCloud } from './common/utils'
 import { scrapeParramatta } from './LGAs/parramatta'
 import ora from 'ora'
-import 'dotenv/config'
 import chalk from 'chalk'
-
-//Used to see if dotenv package is working?
-//console.log(process.env)
 
 export async function start(): Promise<void> {
   const launchingBrowser = ora('Launching browser').start()
