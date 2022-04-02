@@ -15,13 +15,16 @@ export function Event({ event }: EventProps): JSX.Element {
       target="_blank"
       rel="noreferrer"
     >
-      <Image src={event.eventImageUrl} alt="Placeholder" />
+      <Image src={event.imageUrl} alt="Placeholder" />
       <Text>
         <h1>{event.title}</h1>
         {event.description && <p>{event.description}</p>}
         <p>
           {formatDate(event.startDate)}
           {event.endDate && ` - ${formatDate(event.endDate)}`}
+        </p>
+        <p>
+          {event.category &&<p>{event.category}</p>}
         </p>
       </Text>
     </Container>
