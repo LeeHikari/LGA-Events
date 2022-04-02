@@ -20,19 +20,16 @@ export async function exportToJson(events: LGAEvent[]): Promise<void> {
   } catch (error) {
     exportingJson.fail(chalk.red(`Export to JSON failed - ${error}`))
   }
-
-  uploadToCloud()
 }
 
 export async function uploadToCloud(): Promise<void> {
   const uploadingToCloud = ora('Uploading to cloud').start()
-  
+
   try {
     const storage = new Storage()
     await storage.bucket('lgaevents').upload('./out/LGAEvents.json')
 
     uploadingToCloud.succeed(chalk.blue(`Uploaded to cloud successfully`))
-    
   } catch (error) {
     uploadingToCloud.fail(chalk.red(`Uploaded to cloud failed - ${error}`))
   }
