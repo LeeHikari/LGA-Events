@@ -54,9 +54,13 @@ const Grid = styled.div`
 
   @media ${theme.breakpointUp.desktop} {
     grid-template-columns: repeat(3, 1fr);
+    padding-left: 100px;
+    padding-right: 100px;
   }
 
   @media ${theme.breakpointUp.desktopLarge} {
     grid-template-columns: repeat(4, 1fr);
+    padding-left: 100px;
+    padding-right: 100px;
   }
 `
