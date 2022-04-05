@@ -33,6 +33,11 @@ const Header = styled.div`
   grid-area: header;
   background-color: ${theme.color.primary.background};
   padding: 16px;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 2px;
 `
 
 const Title = styled.h1`
