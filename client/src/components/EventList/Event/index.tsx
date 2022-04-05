@@ -17,12 +17,12 @@ export function Event({ event }: EventProps): JSX.Element {
     >
       <Image src={event.imageUrl} alt="Placeholder" />
       <Text>
-        <h1>{event.title}</h1>
-        {event.description && <p>{event.description}</p>}
-        <p>
+      <p style={{marginTop: '0px'}}>
           {formatDate(event.startDate)}
           {event.endDate && ` - ${formatDate(event.endDate)}`}
         </p>
+        <h1>{event.title}</h1>
+        {event.description && <p>{event.description}</p>}
         <p>
           {event.category &&<p>{event.category}</p>}
         </p>
@@ -47,9 +47,11 @@ const Container = styled.a`
 
 const Text = styled.div`
   padding: 10px;
+  font-family: 'EB Garamond', serif;
 
   h1 {
     margin-top: 0;
+    font-weight: 600
   }
 `
 
