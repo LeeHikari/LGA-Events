@@ -1,6 +1,5 @@
 import { LGAEvent } from 'common/types'
 import { formatDate } from 'common/utils'
-import React from 'react'
 import styled from 'styled-components'
 
 type EventProps = {
@@ -17,15 +16,15 @@ export function Event({ event }: EventProps): JSX.Element {
     >
       <Image src={event.imageUrl} alt="Placeholder" />
       <Text>
-      <p style={{marginTop: '0px'}}>
+        <p style={{ marginTop: '0px' }}>
           {formatDate(event.startDate)}
           {event.endDate && ` - ${formatDate(event.endDate)}`}
         </p>
-        <h1>{event.title}</h1>
-        {event.description && <p>{event.description}</p>}
-        <p>
-          {event.category &&<p>{event.category}</p>}
-        </p>
+        {event.title && <h1>{event.title}</h1>}
+        {event.description && (
+          <p className="description">{event.description}</p>
+        )}
+        {event.category && <p>{event.category}</p>}
       </Text>
     </Container>
   )
@@ -51,7 +50,17 @@ const Text = styled.div`
 
   h1 {
     margin-top: 0;
-    font-weight: 600
+    font-weight: 600;
+  }
+
+  .description {
+    display: block;
+  display: -webkit-box;
+  height: 56px;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   }
 `
 
