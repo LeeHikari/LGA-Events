@@ -6,6 +6,10 @@ export const globalStyles = css`
   *::after {
     box-sizing: inherit;
   }
+
+  body {
+    font-family: 'EB Garamond', serif;
+  }
 `
 
 export const normalizedStyles = css`
@@ -20,7 +24,7 @@ export const normalizedStyles = css`
   */
 
   html {
-    line-height: 1.15; /* 1 */
+    line-height: 1;
     -webkit-text-size-adjust: 100%; /* 2 */
   }
 

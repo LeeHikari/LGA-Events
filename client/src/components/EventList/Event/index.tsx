@@ -1,6 +1,8 @@
+import { theme } from 'common/theme'
 import { LGAEvent } from 'common/types'
 import { formatDate } from 'common/utils'
 import styled from 'styled-components'
+import TruncateMarkup from 'react-truncate-markup'
 
 type EventProps = {
   event: LGAEvent
@@ -22,7 +24,9 @@ export function Event({ event }: EventProps): JSX.Element {
         </p>
         {event.title && <h1>{event.title}</h1>}
         {event.description && (
-          <p className="description">{event.description}</p>
+          <TruncateMarkup lines={3}>
+            <p>{event.description}</p>
+          </TruncateMarkup>
         )}
         {event.category && <p>{event.category}</p>}
       </Text>
@@ -32,13 +36,13 @@ export function Event({ event }: EventProps): JSX.Element {
 
 const Container = styled.a`
   background-color: #fff;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: ${theme.shadow.medium};
   border-radius: 5px;
   transition: 0.3s ease;
   color: black;
 
   &:hover {
-    box-shadow: -4px 4px 6px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: ${theme.shadow.mediumLeft};
     transform: translateX(4px);
     cursor: pointer;
   }
@@ -46,26 +50,14 @@ const Container = styled.a`
 
 const Text = styled.div`
   padding: 10px;
-  font-family: 'EB Garamond', serif;
 
   h1 {
     margin-top: 0;
-    font-weight: 600;
-  }
-
-  .description {
-    display: block;
-  display: -webkit-box;
-  height: 56px;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-weight: ${theme.fontWeight.bold};
   }
 `
 
 const Image = styled.img`
-  display: inline;
   width: 100%;
   height: 200px;
   object-fit: cover;

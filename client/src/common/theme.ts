@@ -42,12 +42,19 @@ export const theme = {
     large: '20px',
     extraLarge: '36px',
   },
+  fontWeight: {
+    normal: 400,
+    bold: 700,
+  },
   shadow: {
-    medium: '0 2px 4px 0 hsla(0, 0%, 0%, 0.2)',
-    large: '0 2px 2px 2px hsla(0, 0%, 0%, 0.2)',
-    inner: {
-      medium: '0 2px 4px 2px hsla(0, 0%, 0%, 0.2) inset',
-    },
+    medium: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+    mediumLeft: '-4px 4px 6px 0 rgba(0, 0, 0, 0.3)',
+
+    // medium: '0 2px 4px 0 hsla(0, 0%, 0%, 0.2)',
+    // large: '0 2px 2px 2px hsla(0, 0%, 0%, 0.2)',
+    // inner: {
+    //   medium: '0 2px 4px 2px hsla(0, 0%, 0%, 0.2) inset',
+    // },
   },
 } as const
 
