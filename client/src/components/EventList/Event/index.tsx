@@ -18,17 +18,17 @@ export function Event({ event }: EventProps): JSX.Element {
     >
       <Image src={event.imageUrl} alt="Placeholder" />
       <Text>
-        <p style={{ marginTop: '0px' }}>
+        <p className="date">
           {formatDate(event.startDate)}
           {event.endDate && ` - ${formatDate(event.endDate)}`}
         </p>
         {event.title && <h1>{event.title}</h1>}
         {event.description && (
           <TruncateMarkup lines={3}>
-            <p>{event.description}</p>
+            <p className="description">{event.description}</p>
           </TruncateMarkup>
         )}
-        {event.category && <p>{event.category}</p>}
+        {event.category && <p className="category">{event.category}</p>}
       </Text>
     </Container>
   )
@@ -50,10 +50,23 @@ const Container = styled.a`
 
 const Text = styled.div`
   padding: 10px;
+  font-family: Lato, sans-serif;
 
   h1 {
     margin-top: 0;
-    font-weight: ${theme.fontWeight.bold};
+    font-family: 'EB Garamond', serif;
+    font-weight: ${theme.fontWeight.semiBold};
+    font-size: ${theme.fontSize.large};
+  }
+
+  .date {
+    margin-top: 0px;
+    font-style: italic;
+    font-size: ${theme.fontSize.small};
+  }
+
+  .category {
+    font-style: italic;
   }
 `
 
