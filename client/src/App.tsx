@@ -34,7 +34,6 @@ const Header = styled.div`
   background-color: ${theme.color.primary.background};
   padding: 16px;
   text-align: center;
-  font-family: 'Playfair Display', serif;
   font-weight: 800;
   font-style: italic;
   letter-spacing: 2px;
