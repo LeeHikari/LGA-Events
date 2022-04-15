@@ -9,14 +9,15 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
   let events: LGAEvent[] = []
   try {
     // Only used for dev logging purposes
-    // page.$$eval executes code on a headless browser,
+    // page.locator.evaluateAll executes code on a headless browser,
     // so console.logs inside this function will not appear on the node console.
-    page.on('console', (msg) => {
-      const args = msg.args()
-      for (let i = 0; i < args.length; ++i) {
-        console.log(`${i}: ${args[i]}`)
-      }
-    })
+
+    // page.on('console', (msg) => {
+    //   const args = msg.args()
+    //   for (let i = 0; i < args.length; ++i) {
+    //     console.log(`${i}: ${args[i]}`)
+    //   }
+    // })
 
     await page.goto(`${baseUrl}/whats-on`)
     await page.click('input#edit-action')
@@ -102,14 +103,7 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
                 'div.content-block div.content-details div.description'
               )?.textContent || null
 
-            const eventUrlParts = eventUrl.split('/')
-            const id = encodeURIComponent(
-              //encodeURIComponent converts special characters to be URI friendly
-              `${startDate.toJSON().split('T')[0]}-${
-                //ToJSON formats the date to global standard eg.2022-05-26
-                eventUrlParts[eventUrlParts.length - 1]
-              }`
-            )
+            const id = startDate.toJSON() + title
 
             return {
               title,
