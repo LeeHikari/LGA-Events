@@ -5,7 +5,15 @@ import fs from 'fs'
 import ora from 'ora'
 import chalk from 'chalk'
 
-export async function exportToJson(events: LGAEvent[]): Promise<void> {
+export async function exportToJson(
+  events: LGAEvent[],
+  config?: {
+    /**
+     * Formats the json using 2 spaces.
+     */
+    pretty: boolean
+  }
+): Promise<void> {
   const exportingJson = ora('Exporting to JSON').start()
 
   try {
@@ -14,7 +22,11 @@ export async function exportToJson(events: LGAEvent[]): Promise<void> {
       exportingJson.succeed(chalk.blue(`Out file created`))
     }
 
-    await writeFile('out/LGAEvents.json', JSON.stringify(events))
+    if (config?.pretty) {
+      await writeFile('out/LGAEvents.json', JSON.stringify(events, null, 2))
+    } else {
+      await writeFile('out/LGAEvents.json', JSON.stringify(events))
+    }
 
     exportingJson.succeed(chalk.blue(`Export to JSON successful`))
   } catch (error) {
