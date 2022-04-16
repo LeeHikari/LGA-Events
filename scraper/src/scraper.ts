@@ -1,10 +1,11 @@
 import { webkit } from 'playwright'
+import ora from 'ora'
+import chalk from 'chalk'
 import { LGAEvent } from './common/types'
 import { exportToJson, uploadToCloud } from './common/utils'
 import { scrapeParramatta } from './LGAs/parramatta'
-import ora from 'ora'
-import chalk from 'chalk'
 import { scrapeCampbelltown } from './LGAs/campbelltown'
+import { scrapeInnerWest } from './LGAs/innerwest'
 
 export async function start(): Promise<void> {
   const launchingBrowser = ora('Launching browser').start()
@@ -20,6 +21,7 @@ export async function start(): Promise<void> {
     const promises = Promise.all([
       scrapeParramatta(await context.newPage()),
       scrapeCampbelltown(await context.newPage()),
+      scrapeInnerWest(await context.newPage()),
     ])
 
     const events: LGAEvent[] = (await promises)
