@@ -41,6 +41,8 @@ const Header = styled.div`
 
 const Title = styled.h1`
   color: ${theme.color.primary.foreground};
+  font-size: ${theme.fontSize.extraLarge};
+  margin: 0px;
 `
 
 const Main = styled.div`
