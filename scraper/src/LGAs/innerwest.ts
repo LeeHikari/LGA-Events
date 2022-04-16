@@ -20,6 +20,7 @@ export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
     await page.goto(baseUrl)
     await page.click('a#btnListView')
 
+    // for when we want to load all the events
     // while ((await page.locator('input#btnLoadMore').count()) > 0) {
     //   await page.click('input#btnLoadMore')
     // }
@@ -29,7 +30,8 @@ export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
       .evaluateAll((eventElements: HTMLElement[]) => {
         return eventElements
           .map((eventElement): LGAEvent | null => {
-            const anchorElement = eventElement.querySelector<HTMLElement>('h2.float-left > a') //('span.sr-only')
+            const anchorElement =
+              eventElement.querySelector<HTMLElement>('h2.float-left > a')
             if (!anchorElement?.innerText) {
               console.warn('MISSING: anchorElement - Innerwest')
               return null
@@ -74,10 +76,9 @@ export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
               return null
             }
 
-            const description =
-              eventElement.querySelector<HTMLElement>(
-                'div.wo-eventddesc'
-              )?.innerText?.replace('...more', '')
+            const description = eventElement
+              .querySelector<HTMLElement>('div.wo-eventddesc')
+              ?.innerText?.replace('...more', '')
             if (!description) {
               console.warn('Missing: Description - Inner West')
               return null
