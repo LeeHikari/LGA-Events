@@ -86,8 +86,6 @@ export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
 
             const id = startDate.toJSON() + title
 
-            console.log(`Event scraped: ${title}`)
-
             return {
               title,
               description,
