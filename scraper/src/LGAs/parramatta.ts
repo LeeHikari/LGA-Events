@@ -5,7 +5,7 @@ import chalk from 'chalk'
 
 export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
   const baseUrl = 'https://atparramatta.com'
-  const retrievingElements = ora(`${baseUrl}/whats-on - Getting Elements`)
+  const retrievingElements = ora(`Parramatta - Scraping`)
   let events: LGAEvent[] = []
   try {
     // Only used for dev logging purposes
@@ -52,9 +52,9 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
             const imageUrl = `${pageUrl}${backgroundProperty.slice(from, to)}`
 
             const dateString =
-              anchorElement.querySelector(
+              anchorElement.querySelector<HTMLElement>(
                 'div.content-block div.content-details div.event-date'
-              )?.textContent || null
+              )?.innerText || null
             if (!dateString) {
               return null
             }
@@ -81,27 +81,27 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
             endDate?.setHours(0, 0, 0, 0)
 
             const title =
-              anchorElement.querySelector('div.content-block h4.title')
-                ?.textContent || null
+              anchorElement.querySelector<HTMLElement>('div.content-block h4.title')
+                ?.innerText || null
             if (!title) {
               return null
             }
 
-            const categoryElement = anchorElement.querySelector(
+            const categoryElement = anchorElement.querySelector<HTMLElement>(
               'div.content-block div.content-taxonomy'
             )
-            if (!categoryElement?.textContent) {
+            if (!categoryElement?.innerText) {
               return null
             }
-            const category = categoryElement.textContent.replaceAll(
+            const category = categoryElement.innerText.replaceAll(
               /\s{2,}|\n/g,
               ''
             )
 
             const description =
-              anchorElement.querySelector(
+              anchorElement.querySelector<HTMLElement>(
                 'div.content-block div.content-details div.description'
-              )?.textContent || null
+              )?.innerText || null
 
             const id = startDate.toJSON() + title
 
@@ -119,10 +119,10 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
           .filter((event): event is LGAEvent => event !== null)
       }, baseUrl)
     retrievingElements.succeed(
-      chalk.blue(`${baseUrl}/whats-on - Successfully scraped`)
+      chalk.blue(`Parramatta - Successfully scraped`)
     )
   } catch (error) {
-    retrievingElements.fail(chalk.red(`${baseUrl}/whats-on - ${error}`))
+    retrievingElements.fail(chalk.red(`Parramatta - ${error}`))
   }
   return events
 }
