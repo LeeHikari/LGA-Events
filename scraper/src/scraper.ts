@@ -30,6 +30,8 @@ export async function start(): Promise<void> {
         return currentEvent.startDate.getTime() - nextEvent.startDate.getTime()
       })
 
+    console.log(chalk.blue(`Number of events scraped: ${events.length}`))
+
     const mode = process.argv[2]
     if (mode === '--cloud') {
       await exportToJson(events)

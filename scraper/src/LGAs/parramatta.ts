@@ -114,6 +114,7 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               id,
               imageUrl,
               url: eventUrl,
+              lga: 'parramatta'
             }
           })
           .filter((event): event is LGAEvent => event !== null)

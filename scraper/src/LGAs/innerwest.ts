@@ -95,6 +95,7 @@ export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
               id,
               imageUrl,
               url,
+              lga: 'innerwest'
             }
           })
           .filter((event): event is LGAEvent => event !== null)

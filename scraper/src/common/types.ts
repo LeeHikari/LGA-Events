@@ -7,4 +7,5 @@ export type LGAEvent = {
   id: string
   imageUrl: string
   url: string
+  lga: 'parramatta' | 'innerwest' | 'campbelltown'
 }
