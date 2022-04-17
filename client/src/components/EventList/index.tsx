@@ -1,31 +1,47 @@
 import { theme } from 'common/theme'
 import { Event } from './Event'
 import { LGAEvent } from 'common/types'
-import { useEffect, useState } from 'react'
+import {  useEffect, useRef, useState } from 'react'
 import { getEvents } from 'services/api'
+import {filterEventsByKeyword, Searchbar} from "../SearchBar/index"
 import styled from 'styled-components'
 
 export function EventList(): JSX.Element {
   const [loading, setLoading] = useState(true)
   const [events, setEvents] = useState<LGAEvent[]>([])
+  const [keyword, setKeyword] = useState('')
+  const initialEventsRef = useRef<LGAEvent[]>([])
 
   useEffect(() => {
-    loadEvents()
+    async function load(): Promise<void> {
+      try {
+        const response = await getEvents()
+        initialEventsRef.current = response.data
+        setEvents(response.data)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
   }, [])
 
-  async function loadEvents(): Promise<void> {
-    try {
-      const response = await getEvents()
-      setEvents(response.data)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
+useEffect(() => {
+  if(!keyword) {
+    setEvents(initialEventsRef.current)
+    return
   }
+
+  if(keyword.length >= 3) {
+    setEvents(state => filterEventsByKeyword(state, keyword))
+  }
+},[keyword])
 
   return (
     <>
+      <Searchbar keyword={keyword} setKeyword={setKeyword}/>
       <Heading>Any events on?</Heading>
       {loading ? (
         <h3>loading...</h3>
