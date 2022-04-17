@@ -33,17 +33,13 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: eventUrl - Campbelltown.ts')
               return null
             }
-            //PARSE EVENTURL - END
 
-            //PARSE TITLE - START
             const title = anchorElement.getAttribute('title')
             if (!title) {
               console.warn('MISSING: title - Campbelltown.ts')
               return null
             }
-            //PARSE TITLE - END
 
-            //PARSE DESCRIPTION - START
             const description =
               anchorElement.querySelector(
                 'div.event-listing-info-container p.search-listing-description'
@@ -52,7 +48,6 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: description - Campbelltown.ts')
               return null
             }
-            //PARSE DESCRIPTION - END
 
             // PARSE DATE - START
             const dayString =
@@ -106,7 +101,6 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
             const startDate = new Date(year, monthIndex, day, 0, 0, 0)
             // PARSE DATE - END
 
-            //PARSE IMAGE - START
             const imageUrl = anchorElement
               .querySelector('div.event-listing-image img.listing-image')
               ?.getAttribute('src')
@@ -115,9 +109,7 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: imageURL - Campbelltown.ts')
               return null
             }
-            //PARSE IMAGE - END
 
-            //PARSE CATEGORY - START
             const category = anchorElement.querySelector(
               'div.category-container.event-category-container span.category-listing'
             )?.textContent
@@ -126,7 +118,6 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: category - Campbelltown.ts')
               return null
             }
-            //PARSE CATEGORY - END
 
             const id = startDate.toJSON() + title
 
@@ -139,7 +130,7 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               id,
               imageUrl,
               url: eventUrl,
-              lga: 'campbelltown'
+              lga: 'campbelltown',
             }
           })
           .filter((event): event is LGAEvent => event !== null)

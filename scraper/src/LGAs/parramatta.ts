@@ -29,25 +29,20 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
       .evaluateAll((eventElements: HTMLElement[], pageUrl) => {
         return eventElements
           .map((eventElement): LGAEvent | null => {
-            //PARSE AnchorElement - START
             const anchorElement =
               eventElement.querySelector<HTMLElement>('a.col-wrap')
             if (!anchorElement) {
               console.warn('MISSING: anchor - Parramatta.ts')
               return null
             }
-            //PARSE AnchorElement - END
 
-            //PARSE EventUrl - START
             let eventUrl = anchorElement.getAttribute('href')
             if (!eventUrl) {
               console.warn('MISSING: eventUrl - Parramatta.ts')
               return null
             }
             eventUrl = `${pageUrl}${eventUrl}`
-            //PARSE EventUrl - END
 
-            //PARSE ImageElement - START
             const imageElement =
               anchorElement.querySelector<HTMLElement>('div.image-block')
             if (!imageElement) {
@@ -58,7 +53,6 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
             const from = backgroundProperty.indexOf('"') + 1
             const to = backgroundProperty.lastIndexOf('"')
             const imageUrl = `${pageUrl}${backgroundProperty.slice(from, to)}`
-            //PARSE ImageElement - END
 
             //PARSE DateString - START
             const dateString =
@@ -92,7 +86,6 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
             endDate?.setHours(0, 0, 0, 0)
             //PARSE DateString - END
 
-            //PARSE Title - START
             const title =
               anchorElement.querySelector<HTMLElement>(
                 'div.content-block h4.title'
@@ -101,7 +94,6 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: title')
               return null
             }
-            //PARSE Title - END
 
             const categoryElement = anchorElement.querySelector<HTMLElement>(
               'div.content-block div.content-taxonomy'
@@ -114,9 +106,7 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               /\s{2,}|\n/g,
               ''
             )
-            //PARSE CategoryElement - END
 
-            //PARSE Description - START
             const description =
               anchorElement.querySelector<HTMLElement>(
                 'div.content-block div.content-details div.description'
@@ -125,7 +115,6 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               console.warn('MISSING: description - Parramatta.ts')
               return null
             }
-            //PARSE Description - END
 
             const id = startDate.toJSON() + title
 
