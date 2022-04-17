@@ -5,7 +5,7 @@ import chalk from 'chalk'
 
 export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
   const baseUrl = 'https://atparramatta.com'
-  const retrievingElements = ora(`${baseUrl}/whats-on - Getting Elements`)
+  const retrievingElements = ora(`Parramatta - Scraping`)
   let events: LGAEvent[] = []
   try {
     // Only used for dev logging purposes
@@ -62,9 +62,9 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
 
             //PARSE DateString - START
             const dateString =
-              anchorElement.querySelector(
+              anchorElement.querySelector<HTMLElement>(
                 'div.content-block div.content-details div.event-date'
-              )?.textContent || null
+              )?.innerText || null
             if (!dateString) {
               console.warn('MISSING: date - Parramatta.ts')
               return null
@@ -94,23 +94,23 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
 
             //PARSE Title - START
             const title =
-              anchorElement.querySelector('div.content-block h4.title')
-                ?.textContent || null
+              anchorElement.querySelector<HTMLElement>(
+                'div.content-block h4.title'
+              )?.innerText || null
             if (!title) {
               console.warn('MISSING: title')
               return null
             }
             //PARSE Title - END
 
-            //PARSE CategoryElement - START
-            const categoryElement = anchorElement.querySelector(
+            const categoryElement = anchorElement.querySelector<HTMLElement>(
               'div.content-block div.content-taxonomy'
             )
-            if (!categoryElement?.textContent) {
+            if (!categoryElement?.innerText) {
               console.warn('MISSING: category')
               return null
             }
-            const category = categoryElement.textContent.replaceAll(
+            const category = categoryElement.innerText.replaceAll(
               /\s{2,}|\n/g,
               ''
             )
@@ -118,7 +118,7 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
 
             //PARSE Description - START
             const description =
-              anchorElement.querySelector(
+              anchorElement.querySelector<HTMLElement>(
                 'div.content-block div.content-details div.description'
               )?.textContent || null
             if (!description) {
@@ -138,15 +138,14 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               id,
               imageUrl,
               url: eventUrl,
+              lga: 'parramatta',
             }
           })
           .filter((event): event is LGAEvent => event !== null)
       }, baseUrl)
-    retrievingElements.succeed(
-      chalk.blue(`${baseUrl}/whats-on - Successfully scraped`)
-    )
+    retrievingElements.succeed(chalk.blue(`Parramatta - Successfully scraped`))
   } catch (error) {
-    retrievingElements.fail(chalk.red(`${baseUrl}/whats-on - ${error}`))
+    retrievingElements.fail(chalk.red(`Parramatta - ${error}`))
   }
   return events
 }

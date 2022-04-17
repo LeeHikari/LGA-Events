@@ -139,6 +139,7 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
               id,
               imageUrl,
               url: eventUrl,
+              lga: 'campbelltown'
             }
           })
           .filter((event): event is LGAEvent => event !== null)

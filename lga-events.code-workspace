@@ -6,5 +6,8 @@
     {
       "path": "client"
     }
-  ]
+  ],
+  "settings": {
+    "cSpell.words": ["enddate", "innerwest", "longdescription", "startdate"]
+  }
 }
