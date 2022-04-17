@@ -1,8 +1,11 @@
 import { LGAEvent } from '../common/types'
 import { Page } from 'playwright'
+import ora from 'ora'
+import chalk from 'chalk'
 
 export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
   const baseUrl = 'https://www.campbelltown.nsw.gov.au/WhatsOn'
+  const retrievingElements = ora(`${baseUrl}/whats-on - Getting Elements`)
   let events: LGAEvent[] = []
 
   try {
@@ -24,26 +27,32 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
       .evaluateAll((eventElements: HTMLElement[]) => {
         return eventElements
           .map((anchorElement): LGAEvent | null => {
+            //PARSE EVENTURL - START
             const eventUrl = anchorElement.getAttribute('href')
             if (!eventUrl) {
-              console.warn('MISSING: eventUrl')
+              console.warn('MISSING: eventUrl - Campbelltown.ts')
               return null
             }
+            //PARSE EVENTURL - END
 
+            //PARSE TITLE - START
             const title = anchorElement.getAttribute('title')
             if (!title) {
-              console.warn('MISSING: title')
+              console.warn('MISSING: title - Campbelltown.ts')
               return null
             }
+            //PARSE TITLE - END
 
+            //PARSE DESCRIPTION - START
             const description =
               anchorElement.querySelector(
                 'div.event-listing-info-container p.search-listing-description'
               )?.textContent || null
             if (!description) {
-              console.warn('MISSING: description')
+              console.warn('MISSING: description - Campbelltown.ts')
               return null
             }
+            //PARSE DESCRIPTION - END
 
             // PARSE DATE - START
             const dayString =
@@ -51,13 +60,13 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
                 'div.event-listing-info-container div.event-related-date.event-listing-date span.event-day'
               )?.textContent || null
             if (!dayString) {
-              console.warn('MISSING: dayString')
+              console.warn('MISSING: dayString - Campbelltown.ts')
               return null
             }
 
             const day = Number.parseInt(dayString)
             if (!day) {
-              console.warn('MISSING: day')
+              console.warn('MISSING: day - Campbelltown.ts')
               return null
             }
 
@@ -83,7 +92,7 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
 
             const monthIndex = months.findIndex((m) => m === monthName)
             if (!monthIndex) {
-              console.warn('MISSING: monthIndex')
+              console.warn('MISSING: monthIndex - Campbelltown.ts')
               return null
             }
 
@@ -97,23 +106,27 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
             const startDate = new Date(year, monthIndex, day, 0, 0, 0)
             // PARSE DATE - END
 
+            //PARSE IMAGE - START
             const imageUrl = anchorElement
               .querySelector('div.event-listing-image img.listing-image')
               ?.getAttribute('src')
 
             if (!imageUrl) {
-              console.warn('MISSING: ImageURL')
+              console.warn('MISSING: imageURL - Campbelltown.ts')
               return null
             }
+            //PARSE IMAGE - END
 
+            //PARSE CATEGORY - START
             const category = anchorElement.querySelector(
               'div.category-container.event-category-container span.category-listing'
             )?.textContent
 
             if (!category) {
-              console.warn('MISSING: Category')
+              console.warn('MISSING: category - Campbelltown.ts')
               return null
             }
+            //PARSE CATEGORY - END
 
             const id = startDate.toJSON() + title
 
@@ -130,8 +143,11 @@ export async function scrapeCampbelltown(page: Page): Promise<LGAEvent[]> {
           })
           .filter((event): event is LGAEvent => event !== null)
       })
+    retrievingElements.succeed(
+      chalk.green(`Campbelltown - Successfully scraped`)
+    )
   } catch (error) {
-    console.log(error)
+    retrievingElements.fail(chalk.red(`Campbelltown - ${error}`))
   }
   return events
 }
