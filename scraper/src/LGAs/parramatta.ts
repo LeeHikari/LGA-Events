@@ -29,33 +29,44 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
       .evaluateAll((eventElements: HTMLElement[], pageUrl) => {
         return eventElements
           .map((eventElement): LGAEvent | null => {
+            //PARSE AnchorElement - START
             const anchorElement =
               eventElement.querySelector<HTMLElement>('a.col-wrap')
             if (!anchorElement) {
+              console.warn('MISSING: anchor - Parramatta.ts')
               return null
             }
+            //PARSE AnchorElement - END
 
+            //PARSE EventUrl - START
             let eventUrl = anchorElement.getAttribute('href')
             if (!eventUrl) {
+              console.warn('MISSING: eventUrl - Parramatta.ts')
               return null
             }
             eventUrl = `${pageUrl}${eventUrl}`
+            //PARSE EventUrl - END
 
+            //PARSE ImageElement - START
             const imageElement =
               anchorElement.querySelector<HTMLElement>('div.image-block')
             if (!imageElement) {
+              console.warn('MISSING: image - Parramatta.ts')
               return null
             }
             const backgroundProperty = imageElement.style.background
             const from = backgroundProperty.indexOf('"') + 1
             const to = backgroundProperty.lastIndexOf('"')
             const imageUrl = `${pageUrl}${backgroundProperty.slice(from, to)}`
+            //PARSE ImageElement - END
 
+            //PARSE DateString - START
             const dateString =
               anchorElement.querySelector(
                 'div.content-block div.content-details div.event-date'
               )?.textContent || null
             if (!dateString) {
+              console.warn('MISSING: date - Parramatta.ts')
               return null
             }
 
@@ -79,29 +90,42 @@ export async function scrapeParramatta(page: Page): Promise<LGAEvent[]> {
               ? new Date(dateStringParts[1])
               : null
             endDate?.setHours(0, 0, 0, 0)
+            //PARSE DateString - END
 
+            //PARSE Title - START
             const title =
               anchorElement.querySelector('div.content-block h4.title')
                 ?.textContent || null
             if (!title) {
+              console.warn('MISSING: title')
               return null
             }
+            //PARSE Title - END
 
+            //PARSE CategoryElement - START
             const categoryElement = anchorElement.querySelector(
               'div.content-block div.content-taxonomy'
             )
             if (!categoryElement?.textContent) {
+              console.warn('MISSING: category')
               return null
             }
             const category = categoryElement.textContent.replaceAll(
               /\s{2,}|\n/g,
               ''
             )
+            //PARSE CategoryElement - END
 
+            //PARSE Description - START
             const description =
               anchorElement.querySelector(
                 'div.content-block div.content-details div.description'
               )?.textContent || null
+            if (!description) {
+              console.warn('MISSING: description - Parramatta.ts')
+              return null
+            }
+            //PARSE Description - END
 
             const id = startDate.toJSON() + title
 
