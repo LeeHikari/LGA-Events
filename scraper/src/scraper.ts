@@ -21,7 +21,7 @@ export async function start(): Promise<void> {
     const promises = Promise.all([
       scrapeParramatta(await context.newPage()),
       scrapeCampbelltown(await context.newPage()),
-      scrapeInnerWest(await context.newPage()),
+      scrapeInnerWest(),
     ])
 
     const events: LGAEvent[] = (await promises)

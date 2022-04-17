@@ -1,111 +1,67 @@
 import { LGAEvent } from '../common/types'
-import { Page } from 'playwright'
-import ora from 'ora'
-import chalk from 'chalk'
+import axios from 'axios'
 
-export async function scrapeInnerWest(page: Page): Promise<LGAEvent[]> {
-  const baseUrl =
-    'https://www.innerwest.nsw.gov.au/explore/whats-on#/results?categories=All&types=All&page=1'
-  const retrievingElements = ora(`Innerwest - Scraping`)
-
+export async function scrapeInnerWest(): Promise<LGAEvent[]> {
   let events: LGAEvent[] = []
+
   try {
-    page.on('console', (msg) => {
-      const args = msg.args()
-      for (let i = 0; i < args.length; ++i) {
-        console.log(`${i}: ${args[i]}`)
+    const response = await axios.get<InnerWestLGAEvent[]>(
+      'https://www.innerwest.nsw.gov.au/iwc/api/v1/events?page=1&size=100',
+      {
+        headers: {
+          Accept: 'application/json',
+        },
       }
-    })
+    )
 
-    await page.goto(baseUrl)
-    await page.click('a#btnListView')
-
-    // for when we want to load all the events
-    // while ((await page.locator('input#btnLoadMore').count()) > 0) {
-    //   await page.click('input#btnLoadMore')
-    // }
-
-    events = await page
-      .locator('div.sub-whats-on-event')
-      .evaluateAll((eventElements: HTMLElement[]) => {
-        return eventElements
-          .map((eventElement): LGAEvent | null => {
-            const anchorElement =
-              eventElement.querySelector<HTMLElement>('h2.float-left > a')
-            if (!anchorElement?.innerText) {
-              console.warn('MISSING: anchorElement - Innerwest')
-              return null
-            }
-
-            const title = anchorElement.innerText
-
-            const url = anchorElement.getAttribute('href')
-            if (!url) {
-              console.warn('MISSING: Url - Innerwest')
-              return null
-            }
-
-            const dateString =
-              eventElement.querySelector<HTMLElement>('abbr')?.innerText
-            if (!dateString) {
-              console.warn('Missing: DateString - InnerWest')
-              return null
-            }
-
-            const [day, month, year] = dateString
-              .split('/')
-              .map((subString) => Number.parseInt(subString))
-            if (!day || !month || !year) {
-              console.warn(
-                `Missing: Date - InnerWest ${JSON.stringify([
-                  day,
-                  month,
-                  year,
-                ])}`
-              )
-              return null
-            }
-
-            const startDate = new Date(year, month - 1, day, 0, 0, 0, 0)
-
-            const imageUrl = eventElement
-              .querySelector<HTMLElement>('div.image > img')
-              ?.getAttribute('src')
-            if (!imageUrl) {
-              console.warn('Missing: Image - Inner West')
-              return null
-            }
-
-            const description = eventElement
-              .querySelector<HTMLElement>('div.wo-eventddesc')
-              ?.innerText?.replace('...more', '')
-            if (!description) {
-              console.warn('Missing: Description - Inner West')
-              return null
-            }
-
-            const id = startDate.toJSON() + title
-
-            return {
-              title,
-              description,
-              startDate,
-              endDate: null,
-              category: null,
-              id,
-              imageUrl,
-              url,
-              lga: 'innerwest'
-            }
-          })
-          .filter((event): event is LGAEvent => event !== null)
-      })
-
-    retrievingElements.succeed(chalk.blue(`Innerwest - Successfully scraped`))
+    events = response.data.map(toLGAEvent)
   } catch (error) {
-    retrievingElements.fail(chalk.red(`Innerwest - ${error}`))
-    throw new Error(`Innerwest - ${error}`)
+    console.error(error)
   }
 
   return events
+}
+
+type InnerWestLGAEvent = {
+  EventCategoryName: string
+  EventTypeName: string
+  address: string
+  categories: string // should be converted into an array
+  country: string
+  enddate: string
+  id: number
+  image: string
+  location: string
+  longdescription: string
+  description: string
+  startdate: string
+  state: string
+  suburb: string
+  title: string
+}
+
+function toLGAEvent(event: InnerWestLGAEvent): LGAEvent {
+  const {
+    title,
+    description,
+    id: numberId,
+    image,
+    startdate,
+    enddate,
+    EventCategoryName: category,
+  } = event
+
+  const startDate = new Date(startdate)
+
+  return {
+    category,
+    description,
+    endDate: new Date(enddate),
+    id: `${startDate.toJSON()}${title}`,
+    imageUrl: encodeURIComponent(image),
+    lga: 'innerwest',
+    startDate,
+    title,
+    url: `https://www.innerwest.nsw.gov.au/explore/whats-on#/details/${numberId.toFixed()}`,
+  }
 }
