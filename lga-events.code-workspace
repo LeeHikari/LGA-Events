@@ -8,6 +8,11 @@
     }
   ],
   "settings": {
-    "cSpell.words": ["enddate", "innerwest", "longdescription", "startdate"]
+    "cSpell.words": [
+      "enddate",
+      "innerwest",
+      "longdescription",
+      "startdate"
+    ]
   }
 }
