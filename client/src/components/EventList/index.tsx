@@ -1,9 +1,9 @@
 import { theme } from 'common/theme'
 import { Event } from './Event'
 import { LGAEvent } from 'common/types'
-import {  useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getEvents } from 'services/api'
-import {filterEventsByKeyword, Searchbar} from "../SearchBar/index"
+import { filterEventsByKeyword, Searchbar } from '../SearchBar/index'
 import styled from 'styled-components'
 
 export function EventList(): JSX.Element {
@@ -28,20 +28,20 @@ export function EventList(): JSX.Element {
     load()
   }, [])
 
-useEffect(() => {
-  if(!keyword) {
-    setEvents(initialEventsRef.current)
-    return
-  }
+  useEffect(() => {
+    if (!keyword) {
+      setEvents(initialEventsRef.current)
+      return
+    }
 
-  if(keyword.length >= 3) {
-    setEvents(state => filterEventsByKeyword(state, keyword))
-  }
-},[keyword])
+    if (keyword.length >= 3) {
+      setEvents((state) => filterEventsByKeyword(state, keyword))
+    }
+  }, [keyword])
 
   return (
     <>
-      <Searchbar keyword={keyword} setKeyword={setKeyword}/>
+      <Searchbar keyword={keyword} setKeyword={setKeyword} />
       <Heading>Any events on?</Heading>
       {loading ? (
         <h3>loading...</h3>
